@@ -10,8 +10,10 @@ import { WordsPullUp, WordsPullUpMultiStyle, ScrollRevealText } from "../compone
 import { useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
 import { techStack, experience, testimonials } from "../data";
-import TechIconCardExperience from "../components/TechIconCardExperience";
-import ContactExperience from "../components/contact/ContactExperience";
+import dynamic from "next/dynamic";
+
+const TechIconCardExperience = dynamic(() => import("../components/TechIconCardExperience"), { ssr: false });
+const ContactExperience = dynamic(() => import("../components/contact/ContactExperience"), { ssr: false });
 
 const navLinks = ["About", "Experience", "Projects", "Contact"];
 
