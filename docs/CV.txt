@@ -1,0 +1,48 @@
+Nguyen Khac Quan
+SUMMARY
+Detail-oriented Full Stack Developer with hands-on experience building high-performance web and mobile
+applications using the JavaScript/TypeScript ecosystem. Adept at implementing scalable architectures,
+real-time data synchronization, and CI/CD pipelines. Passionate about leveraging AI-assisted workflows to
+optimize productivity and eager to contribute technical expertise to an innovative engineering team.
+EDUCATION
+Bachelor of Software Engineering - FPT University
+TECHNICAL SKILLS
+Frontend & Mobile: Next.js, React.js, JavaScript, TypeScript, React Native, Flutter, Tailwind CSS
+Backend: Node.js, Nest.js, Java, REST APIs.
+Database & ORM: MongoDB, SQL Server, PostgreSQL, Supabase, Drizzle ORM
+DevOps & Cloud: Docker, Git, GitHub Actions, Vercel, Kubernetes
+AI Skills: AI-Assisted Development, AI Integration, RAG & Vector DBs
+Other Tools: Azure, Linux, Postman, Swagger, Figma
+(+84) 366200504 | khacquan2054@gmail.com | github.com/Khacquan205 | linkedin.com/in/khacquan205
+khacquan-portfolio.com
+District 9, Ho Chi Minh City
+WORK EXPERIENCE
+Applied SOLID principles and layered architecture to design a scalable Node.js backend and highly
+modular React Native components.
+Engineered complex retail business logic, including cart management, checkout processes, and
+automated inventory deduction and validation using TypeScript and Zod.
+Handled complex global state and UI synchronization across the POS workflows utilizing Context API,
+Redux patterns, and Zustand.
+Designed role-based REST APIs (JWT) and integrated native hardware capabilities (QR/Barcode
+scanning) to optimize real-world store operations.
+FullStack Developer - Intern FPT Software HCM Jan 2026 - Mar 2026
+FullStack Developer - Fresher Lyfer
+Designed a layered REST API architecture with Redis caching to drastically reduce latency for high￾frequency data retrieval by 40% (e.g., menus, table availability).
+Implemented WebSockets for the QR ordering system, ensuring zero-latency, bi-directional state
+synchronization between customer devices and the kitchen display.
+Optimized SEO and load times leveraging SSR/SSG strategies, while streamlining complex UI flows
+(live tracking, cart) using TanStack Query for seamless data mutations and caching.
+Sep 2025 - Dec 2025
+Team Leader / Frontend Developer - Academic Project
+Led a 4-member cross-functional team, driving task delegation and seamless full-stack integration
+to ensure on-time delivery despite personnel changes.
+Architected a highly performant frontend using Next.js 16 (App Router) and Server Components to
+achieve optimal rendering speed, SEO, and Core Web Vitals.
+Designed a secure KYC onboarding flow (OCR and liveness checks) and managed complex client￾side data mutations utilizing React Query and strict form validation.
+Engineered interactive UI flows for SignalR real-time chat and VNPay transactions, ensuring
+seamless user experiences and state synchronization across the platform.
+Jun 2025 - Sep 2025
+Point Of Sale Systems
+Real-time Restaurant Management & KDS
+Electric Car Rental Platform
+Sep 2022 - Expected May 2026

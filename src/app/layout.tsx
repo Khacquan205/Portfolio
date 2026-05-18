@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Portfolio',
-  description: 'Portfolio of Marcus Chen',
+  title: 'Portfolio | Nguyen Khac Quan',
+  description: 'Portfolio of Nguyen Khac Quan - Full Stack Developer',
 };
 
 export default function RootLayout({
@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className="antialiased">{children}</body>
     </html>
   );

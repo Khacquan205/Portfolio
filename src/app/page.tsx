@@ -9,7 +9,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { WordsPullUp, WordsPullUpMultiStyle, ScrollRevealText } from "../components/animations";
 import { useRef } from "react";
 
-const navLinks = ["Our story", "Collective", "Workshops", "Programs", "Inquiries"];
+const navLinks = ["About", "Experience", "Projects", "Contact"];
 
 function FeatureCard({ 
   delay, 
@@ -73,10 +73,18 @@ export default function App() {
       <section className="h-screen w-full p-4 md:p-6 pb-0 relative">
         <div className="w-full h-full rounded-2xl md:rounded-[2rem] overflow-hidden relative border border-white/5">
           {/* Background Video */}
-          <video 
-            src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_170732_8a9ccda6-5cff-4628-b164-059c500a2b41.mp4" 
-            autoPlay loop muted playsInline 
-            className="absolute inset-0 w-full h-full object-cover" 
+          <div 
+            suppressHydrationWarning 
+            className="absolute inset-0 w-full h-full"
+            dangerouslySetInnerHTML={{
+              __html: `
+                <video 
+                  src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_170732_8a9ccda6-5cff-4628-b164-059c500a2b41.mp4" 
+                  autoplay loop muted playsinline 
+                  class="absolute inset-0 w-full h-full object-cover"
+                ></video>
+              `
+            }}
           />
           
           {/* Overlays */}
@@ -102,7 +110,7 @@ export default function App() {
             {/* Left: Giant Heading */}
             <div className="md:col-span-8">
               <WordsPullUp 
-                text="Prisma" 
+                text="QUAN" 
                 showAsterisk={true}
                 className="text-[26vw] sm:text-[24vw] md:text-[22vw] lg:text-[20vw] xl:text-[19vw] 2xl:text-[20vw] font-medium leading-[0.85] tracking-[-0.07em] text-[#E1E0CC]"
               />
@@ -116,7 +124,7 @@ export default function App() {
                 transition={{ delay: 0.5, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 className="text-primary/70 text-xs sm:text-sm md:text-base leading-[1.2] max-w-sm"
               >
-                Prisma is a worldwide network of visual artists, filmmakers and storytellers bound not by place, status or labels but by passion and hunger to unlock potential through our unique perspectives.
+                Detail-oriented Full Stack Developer with hands-on experience building high-performance web and mobile applications using the JavaScript/TypeScript ecosystem. Passionate about leveraging AI-assisted workflows to optimize productivity.
               </motion.p>
               
               <motion.button 
@@ -125,7 +133,7 @@ export default function App() {
                 transition={{ delay: 0.7, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                 className="group bg-primary rounded-full pl-6 pr-2 py-2 flex items-center gap-2 hover:gap-3 transition-all duration-300 w-fit"
               >
-                <span className="text-black font-medium text-sm sm:text-base uppercase tracking-widest whitespace-nowrap">Join the lab</span>
+                <span className="text-black font-medium text-sm sm:text-base uppercase tracking-widest whitespace-nowrap">View Resume</span>
                 <div className="bg-black rounded-full w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
                   <ArrowRight className="w-5 h-5 text-primary" />
                 </div>
@@ -139,19 +147,19 @@ export default function App() {
       <section className="bg-black py-24 md:py-32 px-4 md:px-8 flex justify-center w-full">
         <div className="w-full max-w-6xl bg-[#101010] rounded-2xl md:rounded-[2rem] p-8 sm:p-12 md:p-24 border border-white/5 flex flex-col items-center text-center relative overflow-hidden">
           
-          <span className="text-[10px] sm:text-xs text-primary font-bold uppercase tracking-[0.2em] mb-8 md:mb-12">Visual arts</span>
+          <span className="text-[10px] sm:text-xs text-primary font-bold uppercase tracking-[0.2em] mb-8 md:mb-12">Software Engineer</span>
           
           <WordsPullUpMultiStyle 
             segments={[
-              { text: "I am Marcus Chen, ", className: "font-normal" },
-              { text: "a self-taught director. ", className: "italic font-serif opacity-90" },
-              { text: "I have skills in color grading, visual effects, and narrative design.", className: "font-normal" }
+              { text: "I am Nguyen Khac Quan, ", className: "font-normal" },
+              { text: "a Full Stack Developer. ", className: "italic font-serif opacity-90" },
+              { text: "I have skills in React, Next.js, Node.js, and cloud deployments.", className: "font-normal" }
             ]}
             className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl max-w-4xl mx-auto leading-[0.95] sm:leading-[0.9] text-primary"
           />
 
           <ScrollRevealText 
-            text="Over the last seven years, I have worked with Parallax, a Berlin-based production house that crafts cinema, series, and Noir Studio in Paris. Together, we have created work that has earned international acclaim at several major festivals."
+            text="Currently pursuing a Bachelor of Software Engineering at FPT University. I have hands-on experience building scalable backends, real-time data synchronization, and implementing complex business logic for retail and restaurant management systems."
             className="mt-12 md:mt-20 max-w-2xl text-[#DEDBC8] text-xs sm:text-sm md:text-base leading-relaxed"
           />
         </div>
@@ -163,11 +171,11 @@ export default function App() {
         
         <div className="relative z-10 flex flex-col gap-3 px-2 md:px-4">
           <WordsPullUpMultiStyle 
-            segments={[{ text: "Studio-grade workflows for visionary creators.", className: "text-primary block" }]}
+            segments={[{ text: "High-performance applications for modern businesses.", className: "text-primary block" }]}
             className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-normal w-full justify-start text-left"
           />
           <WordsPullUpMultiStyle 
-            segments={[{ text: "Built for pure vision. Powered by art.", className: "text-gray-500 block" }]}
+            segments={[{ text: "Built for scalability. Powered by modern tech.", className: "text-gray-500 block" }]}
             className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-normal w-full justify-start text-left"
           />
         </div>
@@ -182,39 +190,47 @@ export default function App() {
             transition={{ delay: 0, ease: [0.22, 1, 0.36, 1], duration: 0.8 }}
             className="lg:col-span-1 rounded-[1.5rem] lg:rounded-[2rem] overflow-hidden relative border border-white/5 h-[400px] md:h-auto group"
           >
-            <video 
-              src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260406_133058_0504132a-0cf3-4450-a370-8ea3b05c95d4.mp4" 
-              autoPlay loop muted playsInline 
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+            <div 
+              suppressHydrationWarning 
+              className="absolute inset-0 w-full h-full"
+              dangerouslySetInnerHTML={{
+                __html: `
+                  <video 
+                    src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260406_133058_0504132a-0cf3-4450-a370-8ea3b05c95d4.mp4" 
+                    autoplay loop muted playsinline 
+                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  ></video>
+                `
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
             <div className="absolute bottom-6 md:bottom-8 left-6 md:left-8 right-6">
-              <h4 className="text-xl md:text-2xl font-bold text-[#E1E0CC] leading-tight">Your creative canvas.</h4>
+              <h4 className="text-xl md:text-2xl font-bold text-[#E1E0CC] leading-tight">Your technical partner.</h4>
             </div>
           </motion.div>
 
           <FeatureCard 
             id="01"
             delay={0.15}
-            title="Project Storyboard."
+            title="Point Of Sale Systems."
             iconUrl="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171918_4a5edc79-d78f-4637-ac8b-53c43c220606.png&w=1280&q=85"
-            items={["Visual timeline planning", "Scene-by-scene markup", "Export to standard formats"]}
+            items={["Node.js backend & React Native", "Complex retail business logic", "Role-based REST APIs"]}
           />
 
           <FeatureCard 
             id="02"
             delay={0.3}
-            title="Smart Critiques."
+            title="Real-time Restaurant KDS."
             iconUrl="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171741_ed9845ab-f5b2-4018-8ce7-07cc01823522.png&w=1280&q=85"
-            items={["Time-stamped annotations", "Asynchronous feedback", "Version control integration"]}
+            items={["Layered API with Redis caching", "WebSocket bi-directional sync", "SSR/SSG & TanStack Query"]}
           />
 
           <FeatureCard 
             id="03"
             delay={0.45}
-            title="Immersion Capsule."
+            title="EcoRent Platform."
             iconUrl="https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171809_f56666dc-c099-4778-ad82-9ad4f209567b.png&w=1280&q=85"
-            items={["Notification silencing", "Ambient soundscapes", "Schedule syncing"]}
+            items={["Next.js 16 App Router", "KYC onboarding with OCR", "SignalR chat & VNPay"]}
           />
           
         </div>
@@ -222,7 +238,7 @@ export default function App() {
 
       {/* Footer minimal */}
       <footer className="w-full py-8 md:py-12 border-t border-white/5 px-6 md:px-12 flex justify-between items-center text-xs text-gray-500 uppercase tracking-widest font-bold">
-        <span>Prisma Studio</span>
+        <span>Nguyen Khac Quan</span>
         <span>© 2026</span>
       </footer>
 
