@@ -7,7 +7,11 @@
 import { motion, useInView } from "motion/react";
 import { ArrowRight, Check } from "lucide-react";
 import { WordsPullUp, WordsPullUpMultiStyle, ScrollRevealText } from "../components/animations";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import emailjs from "@emailjs/browser";
+import { techStack, experience, testimonials } from "../data";
+import TechIconCardExperience from "../components/TechIconCardExperience";
+import ContactExperience from "../components/contact/ContactExperience";
 
 const navLinks = ["About", "Experience", "Projects", "Contact"];
 
@@ -65,6 +69,41 @@ function FeatureCard({
 export default function App() {
   const card1Ref = useRef(null);
   const isCard1InView = useInView(card1Ref, { once: true, margin: "-100px" });
+
+  const formRef = useRef<HTMLFormElement>(null);
+  const [loading, setLoading] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      await emailjs.sendForm(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '',
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || '',
+        formRef.current as HTMLFormElement,
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || ''
+      );
+
+      setForm({ name: "", email: "", message: "" });
+      alert("Message sent successfully!");
+    } catch (error) {
+      console.error("EmailJS Error:", error);
+      alert("Failed to send message. Please check console for details.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="w-full bg-black min-h-screen text-[#E1E0CC] selection:bg-primary/30 selection:text-white">
@@ -236,7 +275,227 @@ export default function App() {
         </div>
       </section>
 
-      {/* Footer minimal */}
+      {/* SECTION 4: SKILLS */}
+      <section className="bg-black py-24 md:py-32 px-4 md:px-8 w-full max-w-screen-2xl mx-auto border-t border-white/5">
+        <div className="flex flex-col items-center gap-4 mb-16 md:mb-24 text-center">
+          <span className="text-[10px] sm:text-xs text-primary font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10">🤝 What I Bring to the Table</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-[#E1E0CC]">How I Can Contribute & My Key Skills</h2>
+        </div>
+        
+        <div className="flex flex-wrap justify-center gap-6 md:gap-10">
+          {techStack.map((tech) => (
+            <motion.div 
+              key={tech.name}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6 }}
+              className="bg-[#101010] border border-white/10 rounded-[2rem] p-6 md:p-8 flex flex-col items-center gap-6 group hover:bg-[#151515] hover:border-primary/50 transition-all duration-300 shadow-[inset_1px_1px_0px_rgba(225,224,204,0.05)] w-48 md:w-56"
+            >
+              <div className="w-24 h-24 md:w-32 md:h-32 flex items-center justify-center shrink-0 cursor-grab active:cursor-grabbing group-hover:scale-110 transition-transform duration-500">
+                <TechIconCardExperience model={tech} />
+              </div>
+              <p className="text-[#E1E0CC] font-medium text-sm md:text-base text-center group-hover:text-primary transition-colors duration-300">{tech.name}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* SECTION 5: EXPERIENCE */}
+      <section className="bg-black py-24 md:py-32 px-4 md:px-8 w-full max-w-screen-xl mx-auto border-t border-white/5 relative">
+        <div className="flex flex-col items-center gap-4 mb-16 md:mb-24 text-center">
+          <span className="text-[10px] sm:text-xs text-primary font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10">💼 My Career Overview</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-[#E1E0CC]">Professional Work Experience</h2>
+        </div>
+
+        <div className="flex flex-col gap-12 md:gap-20">
+          {experience.map((exp, index) => (
+            <motion.div 
+              key={index}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.7 }}
+              className="flex flex-col lg:flex-row gap-8 lg:gap-16 items-start group"
+            >
+              {/* Left: Visual Card */}
+              <div className="w-full lg:w-2/5 shrink-0 relative bg-[#101010] rounded-[1.5rem] p-6 border border-white/5 shadow-[inset_1px_1px_0px_rgba(225,224,204,0.05)] overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative z-10 flex flex-col items-start gap-4">
+                  <div className="flex items-center gap-1">
+                    {[1,2,3,4,5].map((s) => <img key={s} src="/images/star.png" alt="star" className="w-4 h-4 opacity-80" />)}
+                  </div>
+                  <p className="text-gray-400 text-sm italic line-clamp-4">"{exp.review}"</p>
+                  <img src={exp.imgPath} alt="exp" className="w-full h-auto mt-4 rounded-xl opacity-90 group-hover:opacity-100 transition-opacity" />
+                </div>
+              </div>
+
+              {/* Right: Timeline & Info */}
+              <div className="w-full lg:w-3/5 flex flex-col md:flex-row gap-6 md:gap-10 relative">
+                {/* Timeline line */}
+                <div className="hidden md:block absolute left-[30px] top-12 bottom-0 w-[1px] bg-white/10" />
+                
+                <div className="w-14 h-14 md:w-16 md:h-16 shrink-0 bg-[#212121] rounded-2xl flex items-center justify-center border border-white/10 z-10">
+                  <img src={exp.logoPath} alt="logo" className="w-8 h-8 md:w-10 md:h-10 object-contain" />
+                </div>
+                
+                <div className="flex-1 pt-2">
+                  <h3 className="text-2xl md:text-3xl font-bold text-[#E1E0CC] mb-2 group-hover:text-primary transition-colors duration-300">{exp.title}</h3>
+                  <p className="text-primary/80 text-sm mb-6 flex items-center gap-2">
+                    <span className="opacity-70">🗓️</span> {exp.date}
+                  </p>
+                  <p className="text-gray-500 italic text-sm mb-4">Responsibilities</p>
+                  <ul className="flex flex-col gap-3">
+                    {exp.responsibilities.map((resp, i) => (
+                      <li key={i} className="flex items-start gap-3 text-sm md:text-base text-gray-300">
+                        <Check className="w-4 h-4 mt-1 shrink-0 text-primary" />
+                        <span>{resp}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* SECTION 6: TESTIMONIALS */}
+      <section className="bg-black py-24 md:py-32 px-4 md:px-8 w-full max-w-screen-2xl mx-auto border-t border-white/5">
+        <div className="flex flex-col items-center gap-4 mb-16 md:mb-24 text-center">
+          <span className="text-[10px] sm:text-xs text-primary font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10">⭐️ Customer feedback highlights</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-[#E1E0CC]">What People Say About Me?</h2>
+        </div>
+
+        <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
+          {testimonials.map((test, index) => (
+            <motion.div 
+              key={index}
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: (index % 3) * 0.1 }}
+              className="bg-[#101010] p-6 md:p-8 rounded-[1.5rem] border border-white/5 shadow-[inset_1px_1px_0px_rgba(225,224,204,0.05)] break-inside-avoid relative overflow-hidden group hover:border-white/10 transition-colors"
+            >
+              <div className="absolute top-0 right-0 p-6 opacity-10">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M14.017 21L16.41 14.596L14.017 14.596L14.017 3L22.428 3L22.428 14.596L20.035 21L14.017 21ZM4.01701 21L6.41001 14.596L4.01701 14.596L4.01701 3L12.428 3L12.428 14.596L10.035 21L4.01701 21Z" />
+                </svg>
+              </div>
+              
+              <div className="flex items-center gap-1 mb-6">
+                {[1,2,3,4,5].map((s) => <img key={s} src="/images/star.png" alt="star" className="w-4 h-4 opacity-70" />)}
+              </div>
+              
+              <p className="text-gray-300 text-sm md:text-base leading-relaxed mb-8 relative z-10">"{test.review}"</p>
+              
+              <div className="flex items-center gap-4 relative z-10">
+                <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10 shrink-0">
+                  <img src={test.imgPath} alt={test.name} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-[#E1E0CC]">{test.name}</h4>
+                  <p className="text-xs text-gray-500">{test.mentions}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* SECTION 7: CONTACT */}
+      <section id="contact" className="bg-black py-24 md:py-32 px-4 md:px-8 w-full max-w-screen-xl mx-auto border-t border-white/5 relative">
+        <div className="flex flex-col items-center gap-4 mb-16 md:mb-24 text-center">
+          <span className="text-[10px] sm:text-xs text-primary font-bold uppercase tracking-[0.2em] px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10">💬 Have questions or ideas?</span>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-[#E1E0CC]">Get in Touch – Let’s Connect</h2>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-5 bg-[#101010] p-8 md:p-10 rounded-3xl border border-white/5 shadow-[inset_1px_1px_0px_rgba(225,224,204,0.05)] relative overflow-hidden"
+          >
+            <div className="absolute -top-32 -left-32 w-64 h-64 bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
+            <form
+              ref={formRef}
+              onSubmit={handleSubmit}
+              className="w-full flex flex-col gap-6 relative z-10"
+            >
+              <div className="flex flex-col gap-2">
+                <label htmlFor="name" className="text-sm text-gray-400 font-medium">Your Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="What's your good name?"
+                  required
+                  className="bg-black border border-white/10 rounded-xl px-4 py-3 text-[#E1E0CC] placeholder-gray-600 focus:outline-none focus:border-primary/50 transition-colors"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label htmlFor="email" className="text-sm text-gray-400 font-medium">Your Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="What's your email address?"
+                  required
+                  className="bg-black border border-white/10 rounded-xl px-4 py-3 text-[#E1E0CC] placeholder-gray-600 focus:outline-none focus:border-primary/50 transition-colors"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <label htmlFor="message" className="text-sm text-gray-400 font-medium">Your Message</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={form.message}
+                  onChange={handleChange}
+                  placeholder="How can I help you?"
+                  rows={5}
+                  required
+                  className="bg-black border border-white/10 rounded-xl px-4 py-3 text-[#E1E0CC] placeholder-gray-600 focus:outline-none focus:border-primary/50 transition-colors resize-none"
+                />
+              </div>
+
+              <button 
+                type="submit"
+                disabled={loading}
+                className="mt-4 bg-primary text-black font-bold text-sm md:text-base px-6 py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-primary/90 transition-all disabled:opacity-70 disabled:cursor-not-allowed group"
+              >
+                {loading ? "Sending..." : "Send Message"}
+                {!loading && <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />}
+              </button>
+            </form>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-7 h-[400px] lg:h-full min-h-[500px] rounded-3xl overflow-hidden relative border border-white/5 group bg-[#0a0a0a] hover:cursor-grab active:cursor-grabbing"
+          >
+            <div className="w-full h-full absolute inset-0">
+              <ContactExperience />
+            </div>
+            
+            <div className="absolute bottom-10 left-10 max-w-md pointer-events-none bg-black/40 backdrop-blur-sm p-4 rounded-xl border border-white/10">
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-1">Based in Vietnam</h3>
+              <p className="text-gray-300 text-xs md:text-sm">Always open for a chat or new opportunities. Fill out the form and I'll get back to you as soon as possible.</p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       <footer className="w-full py-8 md:py-12 border-t border-white/5 px-6 md:px-12 flex justify-between items-center text-xs text-gray-500 uppercase tracking-widest font-bold">
         <span>Nguyen Khac Quan</span>
         <span>© 2026</span>
