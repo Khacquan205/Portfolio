@@ -7,6 +7,7 @@
 import { motion, useInView } from "motion/react";
 import { ArrowRight, Check } from "lucide-react";
 import { WordsPullUp, WordsPullUpMultiStyle, ScrollRevealText } from "../components/animations";
+import { LoginButton } from "../components/LoginButton";
 import { useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
 import { techStack, experience, testimonials } from "../data";
@@ -145,6 +146,11 @@ export default function App() {
               </a>
             ))}
           </nav>
+
+          {/* Login Button - Top Right Corner */}
+          <div className="absolute top-3 right-4 md:top-4 md:right-6 z-50">
+            <LoginButton />
+          </div>
 
           {/* Hero Content */}
           <div className="absolute bottom-0 left-0 right-0 w-full p-4 md:p-8 flex flex-col md:grid md:grid-cols-12 md:items-end gap-6 md:gap-8 max-w-screen-2xl mx-auto">

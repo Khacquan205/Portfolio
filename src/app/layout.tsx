@@ -1,5 +1,10 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
 import type { Metadata } from 'next';
 import './globals.css';
+import { SessionProvider } from './providers';
 
 export const metadata: Metadata = {
   title: 'Portfolio | Nguyen Khac Quan',
@@ -13,7 +18,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <SessionProvider>{children}</SessionProvider>
+      </body>
     </html>
   );
 }
