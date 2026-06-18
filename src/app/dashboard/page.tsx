@@ -29,8 +29,14 @@ import {
   Diamond,
   Search,
   X,
+  Plus,
+  Pencil,
+  Trash2,
+  ArrowLeft,
+  Package,
+  BookMarked,
 } from "lucide-react";
-import { DailyReport } from "@/features/agents/types";
+import { DailyReport, Stack, SavedRepo } from "@/features/agents/types";
 import { DataRadar } from "./components/DataRadar";
 
 const ALLOWED_EMAILS = ["khacquan2054@gmail.com"];
@@ -103,12 +109,28 @@ function StatCard({
   );
 }
 
+// ─── Shared client-side cache for trending data ───────────────────────────────
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const trendingCache = new Map<string, any[]>();
+
 // ─── Briefing Display ────────────────────────────────────────────────────────
 
 function BriefingView({ report, online }: { report: DailyReport; online: number }) {
+  const [trendRepos, setTrendRepos] = useState<TrendingRepo[]>([]);
+  const [loadingTrend, setLoadingTrend] = useState(!trendingCache.has("daily"));
+
+  useEffect(() => {
+    const cached = trendingCache.get("daily") as TrendingRepo[] | undefined;
+    if (cached) { setTrendRepos(cached); setLoadingTrend(false); return; }
+    fetch("/api/github/trending?since=daily")
+      .then((r) => r.json())
+      .then((data: TrendingRepo[]) => { trendingCache.set("daily", data); setTrendRepos(data); setLoadingTrend(false); })
+      .catch(() => setLoadingTrend(false));
+  }, []);
+
   const radarSources = [
     { key: "news", label: "Tin tức công nghệ", count: report.newsHighlights.length, color: "#60A5FA" },
-    { key: "github", label: "GitHub nổi bật", count: report.githubTrends.length, color: "#C084FC" },
+    { key: "github", label: "GitHub nổi bật", count: trendRepos.length, color: "#C084FC" },
     { key: "insights", label: "Gợi ý hành động AI", count: report.actionItems.length, color: "#FBBF24" },
   ];
 
@@ -180,7 +202,7 @@ function BriefingView({ report, online }: { report: DailyReport; online: number 
       {/* Stats row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard label="Tin Tức Đã Quét" value={report.stats.newsScanned} hint={`${report.newsHighlights.length} bài nổi bật`} icon={Newspaper} />
-        <StatCard label="Repo Phân Tích" value={report.stats.reposAnalyzed} hint={`${report.githubTrends.length} repo trending`} icon={Github} />
+        <StatCard label="Repo Phân Tích" value={report.stats.reposAnalyzed} hint={`${trendRepos.length} repo trending`} icon={Github} />
         <StatCard label="Hành Động Đề Xuất" value={report.actionItems.length} hint="cần xử lý hôm nay" icon={Zap} />
         <StatCard label="Thời Gian Xử Lý" value={`${(report.stats.durationMs / 1000).toFixed(1)}s`} hint={`trạng thái: ${STATUS_LABELS[report.status]}`} icon={Clock} />
       </div>
@@ -237,36 +259,53 @@ function BriefingView({ report, online }: { report: DailyReport; online: number 
             <div className="w-5 h-5 rounded bg-purple-400/10 flex items-center justify-center text-[9px] font-bold text-purple-400 shrink-0">04</div>
             <Github className="w-4 h-4 text-purple-400" />
             <span className="text-xs font-bold text-[#E1E0CC] uppercase tracking-wider">GitHub Repo Nóng</span>
-            <span className="ml-auto text-[10px] text-gray-600">Tuần này</span>
+            <span className="ml-auto text-[10px] text-gray-600">Hôm nay</span>
           </div>
           <div className="flex flex-col gap-2">
-            {report.githubTrends.length === 0 ? (
+            {loadingTrend ? (
+              <p className="text-xs text-gray-600 text-center py-4">Đang tải...</p>
+            ) : trendRepos.length === 0 ? (
               <p className="text-xs text-gray-600 text-center py-4">Chưa có dữ liệu GitHub</p>
             ) : (
-              report.githubTrends.map((trend, i) => (
-                <motion.a
-                  key={i}
-                  href={trend.repo.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.25 + i * 0.04 }}
-                  className="group flex flex-col gap-1.5 p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-purple-500/20 hover:bg-purple-500/5 transition-all"
-                >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-bold text-[#E1E0CC] group-hover:text-white transition-colors truncate">{trend.repo.fullName}</span>
-                    <div className="flex items-center gap-1 shrink-0">
-                      <Star className="w-3 h-3 text-yellow-500" />
-                      <span className="text-[10px] text-gray-400">{trend.repo.stars.toLocaleString()}</span>
+              trendRepos.slice(0, 6).map((repo, i) => {
+                const owner = repo.fullName.split("/")[0];
+                return (
+                  <motion.a
+                    key={repo.fullName}
+                    href={repo.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.25 + i * 0.04 }}
+                    className="group flex flex-col gap-1.5 p-3 rounded-xl bg-white/[0.02] border border-white/5 hover:border-purple-500/20 hover:bg-purple-500/5 transition-all"
+                  >
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={`https://github.com/${owner}.png?size=32`}
+                        alt={owner}
+                        className="w-6 h-6 rounded-md object-cover shrink-0 border border-white/5"
+                      />
+                      <span className="text-xs font-bold text-[#E1E0CC] group-hover:text-white transition-colors truncate flex-1">{repo.fullName}</span>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <Star className="w-3 h-3 text-yellow-500" />
+                        <span className="text-[10px] text-gray-400">{repo.stars.toLocaleString()}</span>
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-[11px] text-gray-500 leading-relaxed line-clamp-2">{trend.insight}</p>
-                  {trend.repo.language && (
-                    <span className="text-[9px] font-bold text-purple-400/70 uppercase tracking-wider">{trend.repo.language}</span>
-                  )}
-                </motion.a>
-              ))
+                    {repo.description && (
+                      <p className="text-[11px] text-gray-500 leading-relaxed whitespace-pre-line line-clamp-2">{repo.description}</p>
+                    )}
+                    <div className="flex items-center gap-2">
+                      {repo.language && (
+                        <span className="text-[9px] font-bold text-purple-400/70 uppercase tracking-wider">{repo.language}</span>
+                      )}
+                      {repo.starsToday > 0 && (
+                        <span className="text-[9px] font-bold text-green-400">+{repo.starsToday.toLocaleString()} hôm nay</span>
+                      )}
+                    </div>
+                  </motion.a>
+                );
+              })
             )}
           </div>
         </motion.div>
@@ -277,48 +316,154 @@ function BriefingView({ report, online }: { report: DailyReport; online: number 
 
 // ─── GitHub Explore View ─────────────────────────────────────────────────────
 
-type GithubPeriod = "day" | "week" | "month" | "year";
+type GithubPeriod = "day" | "week" | "month";
 
-const PERIOD_OPTIONS: { id: GithubPeriod; label: string; ms: number }[] = [
-  { id: "day",   label: "Ngày",  ms: 86_400_000 },
-  { id: "week",  label: "Tuần",  ms: 7 * 86_400_000 },
-  { id: "month", label: "Tháng", ms: 30 * 86_400_000 },
-  { id: "year",  label: "Năm",   ms: 365 * 86_400_000 },
+const PERIOD_OPTIONS: { id: GithubPeriod; label: string; since: string }[] = [
+  { id: "day",   label: "Hôm nay",   since: "daily"   },
+  { id: "week",  label: "Tuần này",  since: "weekly"  },
+  { id: "month", label: "Tháng này", since: "monthly" },
 ];
 
-function GithubExploreView({ report }: { report: DailyReport }) {
+interface TrendingRepo {
+  fullName: string;
+  description: string;
+  language: string | null;
+  stars: number;
+  starsToday: number;
+  forks: number;
+  url: string;
+}
+
+type GithubExploreViewProps = {
+  stacks: Stack[];
+  onStacksChange: (s: Stack[]) => void;
+};
+
+function GithubExploreView({ stacks, onStacksChange }: GithubExploreViewProps) {
   const [search, setSearch] = useState("");
-  const [period, setPeriod] = useState<GithubPeriod>("week");
+  const [period, setPeriod] = useState<GithubPeriod>("day");
+  const [repos, setRepos] = useState<TrendingRepo[]>([]);
+  const [loadingTrending, setLoadingTrending] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [addingRepo, setAddingRepo] = useState<TrendingRepo | null>(null);
+  const [addedTo, setAddedTo] = useState<string | null>(null);
 
-  const now = Date.now();
-  const periodMs = PERIOD_OPTIONS.find((p) => p.id === period)!.ms;
+  useEffect(() => {
+    const since = PERIOD_OPTIONS.find((p) => p.id === period)!.since;
+    const cached = trendingCache.get(since) as TrendingRepo[] | undefined;
+    if (cached) { setRepos(cached); return; }
+    setLoadingTrending(true);
+    setFetchError(null);
+    fetch(`/api/github/trending?since=${since}`)
+      .then((r) => { if (!r.ok) throw new Error(`Lỗi ${r.status}`); return r.json(); })
+      .then((data: TrendingRepo[]) => { trendingCache.set(since, data); setRepos(data); setLoadingTrending(false); })
+      .catch((err) => { setFetchError(err.message); setLoadingTrending(false); });
+  }, [period]);
 
-  const filteredTrends = report.githubTrends.filter((trend) => {
-    const pushedMs = new Date(trend.repo.pushedAt).getTime();
-    if (now - pushedMs > periodMs) return false;
+  const filteredTrends = repos.filter((repo) => {
     if (!search) return true;
     const q = search.toLowerCase();
     return (
-      trend.repo.fullName.toLowerCase().includes(q) ||
-      (trend.repo.language?.toLowerCase() ?? "").includes(q) ||
-      trend.repo.topics.some((t) => t.toLowerCase().includes(q)) ||
-      trend.insight.toLowerCase().includes(q) ||
-      trend.repo.description?.toLowerCase().includes(q)
+      repo.fullName.toLowerCase().includes(q) ||
+      (repo.language?.toLowerCase() ?? "").includes(q) ||
+      repo.description.toLowerCase().includes(q)
     );
   });
 
+  async function handleAddToStack(stackId: string) {
+    if (!addingRepo) return;
+    const savedRepo: SavedRepo = {
+      fullName: addingRepo.fullName,
+      url: addingRepo.url,
+      stars: addingRepo.stars,
+      language: addingRepo.language,
+      description: addingRepo.description,
+      addedAt: new Date().toISOString(),
+    };
+    const res = await fetch(`/api/stacks/${stackId}/repos`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ repo: savedRepo }),
+    });
+    if (res.ok) {
+      const updated = await res.json();
+      onStacksChange(stacks.map((s) => (s.id === stackId ? updated : s)));
+      setAddedTo(stackId);
+      setTimeout(() => {
+        setAddedTo(null);
+        setAddingRepo(null);
+      }, 1200);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-4">
+
+      {/* Add to Stack Modal */}
+      <AnimatePresence>
+        {addingRepo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+            onClick={() => { setAddingRepo(null); setAddedTo(null); }}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 w-full max-w-sm mx-4"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <p className="text-xs font-bold text-[#E1E0CC] uppercase tracking-wider">Thêm vào Stack</p>
+                  <p className="text-[10px] text-gray-600 mt-0.5 truncate max-w-[200px]">{addingRepo.fullName}</p>
+                </div>
+                <button onClick={() => { setAddingRepo(null); setAddedTo(null); }} className="text-gray-600 hover:text-gray-400 transition-colors">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              {stacks.length === 0 ? (
+                <p className="text-xs text-gray-600 text-center py-6">Chưa có Stack nào. Hãy tạo Stack trong tab Phân Loại.</p>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {stacks.map((stack) => (
+                    <button
+                      key={stack.id}
+                      onClick={() => handleAddToStack(stack.id)}
+                      className={`flex items-center justify-between gap-3 px-4 py-3 rounded-xl border text-left transition-all ${
+                        addedTo === stack.id
+                          ? "bg-green-500/10 border-green-500/30 text-green-400"
+                          : "bg-white/[0.02] border-white/5 hover:border-primary/30 hover:bg-primary/5 text-[#E1E0CC]"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <BookMarked className="w-3.5 h-3.5 shrink-0 text-primary/60" />
+                        <span className="text-xs font-semibold truncate">{stack.name}</span>
+                      </div>
+                      <span className="text-[10px] text-gray-600 shrink-0">
+                        {addedTo === stack.id ? "✓ Đã thêm" : `${stack.repos.length} repo`}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Github className="w-4 h-4 text-purple-400" />
-          <h2 className="text-xs font-bold text-[#E1E0CC] uppercase tracking-wider">Khám Phá GitHub Trending</h2>
+          <h2 className="text-xs font-bold text-[#E1E0CC] uppercase tracking-wider">GitHub Trending — Real-time</h2>
         </div>
-        <span className="text-[10px] text-gray-600">
-          {filteredTrends.length}/{report.githubTrends.length} repo · cập nhật {new Date(report.generatedAt).toLocaleTimeString("vi-VN")}
-        </span>
+        {!loadingTrending && repos.length > 0 && (
+          <span className="text-[10px] text-gray-600">{filteredTrends.length}/{repos.length} repo</span>
+        )}
       </div>
 
       {/* Search + Period filter */}
@@ -327,7 +472,7 @@ function GithubExploreView({ report }: { report: DailyReport }) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-600 pointer-events-none" />
           <input
             type="text"
-            placeholder="Tìm kiếm repo, ngôn ngữ, topic..."
+            placeholder="Tìm kiếm repo, ngôn ngữ..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-[#101010] border border-white/5 rounded-xl pl-9 pr-9 py-2.5 text-xs text-[#E1E0CC] placeholder:text-gray-600 focus:outline-none focus:border-purple-500/30 transition-colors"
@@ -360,54 +505,84 @@ function GithubExploreView({ report }: { report: DailyReport }) {
       </div>
 
       {/* Results */}
-      {filteredTrends.length === 0 ? (
+      {loadingTrending ? (
+        <div className="flex flex-col items-center justify-center py-16 gap-3">
+          <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-gray-600">Đang tải trending từ GitHub...</p>
+        </div>
+      ) : fetchError ? (
+        <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
+          <AlertCircle className="w-8 h-8 text-red-400/60" />
+          <p className="text-xs text-red-400">Không thể tải dữ liệu: {fetchError}</p>
+        </div>
+      ) : filteredTrends.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
           <Github className="w-8 h-8 text-gray-700" />
           <p className="text-xs text-gray-600">
-            {search
-              ? `Không tìm thấy repo nào khớp với "${search}"`
-              : `Không có repo nào được cập nhật trong khoảng thời gian này`}
+            {search ? `Không tìm thấy repo nào khớp với "${search}"` : "Không có dữ liệu"}
           </p>
-          {!search && (
-            <p className="text-[10px] text-gray-700">Thử chọn khoảng thời gian rộng hơn</p>
-          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filteredTrends.map((trend, i) => (
-            <motion.a
-              key={trend.repo.fullName}
-              href={trend.repo.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.04 }}
-              className="group flex flex-col gap-3 p-4 rounded-2xl bg-[#101010] border border-white/5 hover:border-purple-500/30 hover:bg-purple-500/5 transition-all"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <span className="text-sm font-bold text-[#E1E0CC] group-hover:text-white transition-colors truncate">{trend.repo.fullName}</span>
-                <ExternalLink className="w-3.5 h-3.5 text-gray-700 group-hover:text-gray-400 transition-colors shrink-0" />
-              </div>
-              <p className="text-xs text-gray-500 leading-relaxed line-clamp-3">{trend.insight}</p>
-              <div className="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-white/5">
-                <div className="flex items-center gap-1">
-                  <Star className="w-3 h-3 text-yellow-500" />
-                  <span className="text-[10px] text-gray-400">{trend.repo.stars.toLocaleString()}</span>
+          {filteredTrends.map((repo, i) => {
+            const owner = repo.fullName.split("/")[0];
+            return (
+              <motion.div
+                key={repo.fullName}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.03 }}
+                className="group flex flex-col gap-3 p-4 rounded-2xl bg-[#101010] border border-white/5 hover:border-purple-500/30 hover:bg-purple-500/5 transition-all"
+              >
+                <div className="flex items-start gap-3">
+                  <img
+                    src={`https://github.com/${owner}.png?size=40`}
+                    alt={owner}
+                    className="w-8 h-8 rounded-lg object-cover shrink-0 border border-white/5"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="text-sm font-bold text-[#E1E0CC] group-hover:text-white transition-colors truncate leading-tight">{repo.fullName}</span>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          onClick={() => setAddingRepo(repo)}
+                          title="Thêm vào Stack"
+                          className="p-1 rounded-lg text-gray-700 hover:text-primary hover:bg-primary/10 transition-all"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                        </button>
+                        <a
+                          href={repo.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-1 rounded-lg text-gray-700 hover:text-gray-400 transition-colors"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                {trend.repo.language && (
-                  <span className="text-[9px] font-bold text-purple-400/70 uppercase tracking-wider">{trend.repo.language}</span>
+                {repo.description && (
+                  <p className="text-xs text-gray-500 leading-relaxed whitespace-pre-line">{repo.description}</p>
                 )}
-              </div>
-              {trend.repo.topics.length > 0 && (
-                <div className="flex flex-wrap gap-1">
-                  {trend.repo.topics.slice(0, 4).map((topic) => (
-                    <span key={topic} className="text-[9px] text-gray-500 bg-white/5 px-1.5 py-0.5 rounded-full">{topic}</span>
-                  ))}
+                <div className="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-white/5">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-3 h-3 text-yellow-500" />
+                      <span className="text-[10px] text-gray-400">{repo.stars.toLocaleString()}</span>
+                    </div>
+                    {repo.starsToday > 0 && (
+                      <span className="text-[10px] font-bold text-green-400">+{repo.starsToday.toLocaleString()} hôm nay</span>
+                    )}
+                  </div>
+                  {repo.language && (
+                    <span className="text-[9px] font-bold text-purple-400/70 uppercase tracking-wider">{repo.language}</span>
+                  )}
                 </div>
-              )}
-            </motion.a>
-          ))}
+              </motion.div>
+            );
+          })}
         </div>
       )}
     </div>
@@ -456,22 +631,401 @@ function AINewsView({ report }: { report: DailyReport }) {
   );
 }
 
-// ─── Categorize View (placeholder) ─────────────────────────────────────────────
+// ─── Categorize View ─────────────────────────────────────────────────────────
 
-function CategorizeView() {
+const INPUT_CLASS =
+  "w-full bg-[#101010] border border-white/5 rounded-xl px-3 py-2.5 text-xs text-[#E1E0CC] placeholder:text-gray-600 focus:outline-none focus:border-primary/30 transition-colors";
+
+type StackFormData = { name: string; description: string; tags: string; imageUrl: string };
+const EMPTY_FORM: StackFormData = { name: "", description: "", tags: "", imageUrl: "" };
+
+type RepoFormData = { fullName: string; description: string; url: string };
+const EMPTY_REPO_FORM: RepoFormData = { fullName: "", description: "", url: "" };
+
+type CategorizeViewProps = { stacks: Stack[]; onStacksChange: (s: Stack[]) => void };
+
+function CategorizeView({ stacks, onStacksChange }: CategorizeViewProps) {
+  const [loading, setLoading] = useState(true);
+  const [selectedStack, setSelectedStack] = useState<Stack | null>(null);
+  const [modal, setModal] = useState<"create" | "edit" | null>(null);
+  const [form, setForm] = useState<StackFormData>(EMPTY_FORM);
+  const [saving, setSaving] = useState(false);
+  const [showAddRepo, setShowAddRepo] = useState(false);
+  const [repoForm, setRepoForm] = useState<RepoFormData>(EMPTY_REPO_FORM);
+  const [savingRepo, setSavingRepo] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/stacks")
+      .then((r) => r.json())
+      .then((data) => { onStacksChange(data); setLoading(false); })
+      .catch(() => setLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function openCreate() {
+    setForm(EMPTY_FORM);
+    setModal("create");
+  }
+
+  function openEdit(stack: Stack, e: React.MouseEvent) {
+    e.stopPropagation();
+    setForm({ name: stack.name, description: stack.description, tags: stack.tags.join(", "), imageUrl: stack.imageUrl });
+    setModal("edit");
+    setSelectedStack(stack);
+  }
+
+  async function handleSave() {
+    if (!form.name.trim()) return;
+    setSaving(true);
+    const body = {
+      name: form.name.trim(),
+      description: form.description.trim(),
+      tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
+      imageUrl: form.imageUrl.trim(),
+    };
+    if (modal === "create") {
+      const res = await fetch("/api/stacks", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      if (res.ok) {
+        const created = await res.json();
+        onStacksChange([...stacks, created]);
+      }
+    } else if (modal === "edit" && selectedStack) {
+      const res = await fetch(`/api/stacks/${selectedStack.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      if (res.ok) {
+        const updated = await res.json();
+        onStacksChange(stacks.map((s) => (s.id === selectedStack.id ? updated : s)));
+        if (selectedStack) setSelectedStack(updated);
+      }
+    }
+    setSaving(false);
+    setModal(null);
+  }
+
+  async function handleDelete(stack: Stack, e: React.MouseEvent) {
+    e.stopPropagation();
+    if (!window.confirm(`Xóa stack "${stack.name}"?`)) return;
+    await fetch(`/api/stacks/${stack.id}`, { method: "DELETE" });
+    onStacksChange(stacks.filter((s) => s.id !== stack.id));
+    if (selectedStack?.id === stack.id) setSelectedStack(null);
+  }
+
+  async function handleRemoveRepo(stackId: string, repoFullName: string) {
+    const res = await fetch(`/api/stacks/${stackId}/repos?repo=${encodeURIComponent(repoFullName)}`, { method: "DELETE" });
+    if (res.ok) {
+      const updated = await res.json();
+      onStacksChange(stacks.map((s) => (s.id === stackId ? updated : s)));
+      setSelectedStack(updated);
+    }
+  }
+
+  async function handleAddRepo() {
+    if (!selectedStack || !repoForm.fullName.trim() || !repoForm.url.trim()) return;
+    setSavingRepo(true);
+    const repo: SavedRepo = {
+      fullName: repoForm.fullName.trim(),
+      description: repoForm.description.trim(),
+      url: repoForm.url.trim(),
+      stars: 0,
+      language: null,
+      addedAt: new Date().toISOString(),
+    };
+    const res = await fetch(`/api/stacks/${selectedStack.id}/repos`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ repo }),
+    });
+    if (res.ok) {
+      const updated = await res.json();
+      onStacksChange(stacks.map((s) => (s.id === selectedStack.id ? updated : s)));
+      setSelectedStack(updated);
+      setRepoForm(EMPTY_REPO_FORM);
+      setShowAddRepo(false);
+    }
+    setSavingRepo(false);
+  }
+
+  // Detail view
+  if (selectedStack) {
+    return (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-4">
+
+        {/* Add Repo Modal */}
+        <AnimatePresence>
+          {showAddRepo && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+              onClick={() => { setShowAddRepo(false); setRepoForm(EMPTY_REPO_FORM); }}
+            >
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.95, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 w-full max-w-md mx-4 flex flex-col gap-4"
+              >
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-bold text-[#E1E0CC] uppercase tracking-wider">Thêm Repo Thủ Công</p>
+                  <button onClick={() => { setShowAddRepo(false); setRepoForm(EMPTY_REPO_FORM); }} className="text-gray-600 hover:text-gray-400 transition-colors">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1.5 block">Tên repo *</label>
+                    <input className={INPUT_CLASS} placeholder="Ví dụ: owner/repo-name" value={repoForm.fullName} onChange={(e) => setRepoForm({ ...repoForm, fullName: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1.5 block">Mô tả</label>
+                    <input className={INPUT_CLASS} placeholder="Mô tả ngắn về repo..." value={repoForm.description} onChange={(e) => setRepoForm({ ...repoForm, description: e.target.value })} />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1.5 block">Link repo *</label>
+                    <input className={INPUT_CLASS} placeholder="https://github.com/..." value={repoForm.url} onChange={(e) => setRepoForm({ ...repoForm, url: e.target.value })} />
+                  </div>
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <button onClick={() => { setShowAddRepo(false); setRepoForm(EMPTY_REPO_FORM); }} className="px-4 py-2 rounded-xl text-xs text-gray-500 hover:text-[#E1E0CC] hover:bg-white/5 transition-all">Hủy</button>
+                  <button
+                    onClick={handleAddRepo}
+                    disabled={savingRepo || !repoForm.fullName.trim() || !repoForm.url.trim()}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-black text-xs font-bold uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-all"
+                  >
+                    {savingRepo ? <Loader2 className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
+                    Thêm
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="flex items-center gap-3">
+          <button onClick={() => setSelectedStack(null)} className="p-1.5 rounded-lg text-gray-600 hover:text-[#E1E0CC] hover:bg-white/5 transition-all">
+            <ArrowLeft className="w-4 h-4" />
+          </button>
+          <div className="flex items-center gap-2 flex-1 min-w-0">
+            {selectedStack.imageUrl && (
+              <img src={selectedStack.imageUrl} alt="" className="w-8 h-8 rounded-lg object-cover shrink-0" />
+            )}
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-[#E1E0CC] truncate">{selectedStack.name}</p>
+              {selectedStack.description && (
+                <p className="text-[10px] text-gray-600 truncate">{selectedStack.description}</p>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => { setRepoForm(EMPTY_REPO_FORM); setShowAddRepo(true); }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold text-primary bg-primary/10 hover:bg-primary/20 border border-primary/20 transition-all uppercase tracking-wider"
+            >
+              <Plus className="w-3 h-3" /> Thêm Repo
+            </button>
+            <button onClick={(e) => openEdit(selectedStack, e)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold text-gray-400 bg-white/5 hover:bg-white/10 transition-all uppercase tracking-wider">
+              <Pencil className="w-3 h-3" /> Sửa
+            </button>
+          </div>
+        </div>
+
+        {selectedStack.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {selectedStack.tags.map((tag) => (
+              <span key={tag} className="text-[9px] text-primary/80 bg-primary/10 px-2 py-0.5 rounded-full font-semibold uppercase tracking-wider">{tag}</span>
+            ))}
+          </div>
+        )}
+
+        {selectedStack.repos.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
+            <Package className="w-8 h-8 text-gray-700" />
+            <p className="text-xs text-gray-600">Chưa có repo nào trong stack này.</p>
+            <p className="text-[10px] text-gray-700">Nhấn &quot;Thêm Repo&quot; hoặc dùng nút + trong tab Khám Phá GitHub.</p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <p className="text-[9px] font-bold text-gray-600 uppercase tracking-widest">{selectedStack.repos.length} repo</p>
+            {selectedStack.repos.map((repo) => {
+              const repoOwner = repo.fullName.split("/")[0];
+              return (
+              <div key={repo.fullName} className="flex items-center gap-3 p-3 rounded-xl bg-[#101010] border border-white/5 group">
+                <img
+                  src={`https://github.com/${repoOwner}.png?size=32`}
+                  alt={repoOwner}
+                  className="w-7 h-7 rounded-md object-cover shrink-0 border border-white/5"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-[#E1E0CC] truncate">{repo.fullName}</p>
+                  {repo.description && <p className="text-[10px] text-gray-600 truncate">{repo.description}</p>}
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-3 h-3 text-yellow-500" />
+                    <span className="text-[10px] text-gray-400">{repo.stars.toLocaleString()}</span>
+                  </div>
+                  {repo.language && <span className="text-[9px] font-bold text-purple-400/70 uppercase tracking-wider">{repo.language}</span>}
+                  <a href={repo.url} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-gray-400 transition-colors">
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                  <button onClick={() => handleRemoveRepo(selectedStack.id, repo.fullName)} className="text-gray-700 hover:text-red-400 transition-colors">
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+              );
+            })}
+          </div>
+        )}
+      </motion.div>
+    );
+  }
+
+  // Modal
+  const showModal = modal !== null;
+
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="flex flex-col items-center justify-center h-64 gap-6 text-center"
-    >
-      <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-        <Tags className="w-8 h-8 text-primary/60" />
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col gap-4">
+      {/* Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+            onClick={() => setModal(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 w-full max-w-md mx-4 flex flex-col gap-4"
+            >
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-bold text-[#E1E0CC] uppercase tracking-wider">
+                  {modal === "create" ? "Tạo Stack Mới" : "Chỉnh Sửa Stack"}
+                </p>
+                <button onClick={() => setModal(null)} className="text-gray-600 hover:text-gray-400 transition-colors">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex flex-col gap-3">
+                <div>
+                  <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1.5 block">Tên *</label>
+                  <input className={INPUT_CLASS} placeholder="Ví dụ: AI Tools" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1.5 block">Mô tả</label>
+                  <textarea className={INPUT_CLASS} placeholder="Mô tả ngắn về stack này..." rows={3} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1.5 block">Tags <span className="normal-case font-normal">(phân cách bằng dấu phẩy)</span></label>
+                  <input className={INPUT_CLASS} placeholder="ai, llm, tools" value={form.tags} onChange={(e) => setForm({ ...form, tags: e.target.value })} />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider mb-1.5 block">Image URL <span className="normal-case font-normal">(tùy chọn)</span></label>
+                  <input className={INPUT_CLASS} placeholder="https://..." value={form.imageUrl} onChange={(e) => setForm({ ...form, imageUrl: e.target.value })} />
+                </div>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <button onClick={() => setModal(null)} className="px-4 py-2 rounded-xl text-xs text-gray-500 hover:text-[#E1E0CC] hover:bg-white/5 transition-all">Hủy</button>
+                <button
+                  onClick={handleSave}
+                  disabled={saving || !form.name.trim()}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-black text-xs font-bold uppercase tracking-wider disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-all"
+                >
+                  {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : null}
+                  {modal === "create" ? "Tạo Stack" : "Lưu"}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Tags className="w-4 h-4 text-primary" />
+          <h2 className="text-xs font-bold text-[#E1E0CC] uppercase tracking-wider">Stack Của Tôi</h2>
+        </div>
+        <button
+          onClick={openCreate}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-primary text-black text-[10px] font-bold uppercase tracking-wider hover:bg-primary/90 transition-all"
+        >
+          <Plus className="w-3 h-3" /> Tạo Stack
+        </button>
       </div>
-      <div>
-        <p className="text-sm font-bold text-[#E1E0CC] mb-2">Phân loại — đang phát triển</p>
-        <p className="text-xs text-gray-600 max-w-sm">Tính năng phân loại GitHub repo theo nhóm/chủ đề sẽ được triển khai sau.</p>
-      </div>
+
+      {/* Content */}
+      {loading ? (
+        <div className="flex items-center justify-center py-16">
+          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : stacks.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
+          <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+            <BookMarked className="w-8 h-8 text-primary/60" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-[#E1E0CC] mb-2">Chưa có Stack nào</p>
+            <p className="text-xs text-gray-600 max-w-xs">Tạo Stack để lưu trữ các repo GitHub bạn quan tâm theo chủ đề.</p>
+          </div>
+          <button onClick={openCreate} className="flex items-center gap-2 bg-primary text-black text-xs font-bold uppercase tracking-widest px-5 py-2.5 rounded-xl hover:bg-primary/90 transition-all">
+            <Plus className="w-3.5 h-3.5" /> Tạo Stack Đầu Tiên
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {stacks.map((stack, i) => (
+            <motion.div
+              key={stack.id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04 }}
+              onClick={() => setSelectedStack(stack)}
+              className="group flex flex-col gap-3 p-4 rounded-2xl bg-[#101010] border border-white/5 hover:border-primary/30 hover:bg-primary/5 transition-all cursor-pointer"
+            >
+              <div className="flex items-start gap-3">
+                {stack.imageUrl ? (
+                  <img src={stack.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                ) : (
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                    <BookMarked className="w-4 h-4 text-primary/60" />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-[#E1E0CC] group-hover:text-white transition-colors truncate">{stack.name}</p>
+                  {stack.description && (
+                    <p className="text-[11px] text-gray-500 leading-relaxed line-clamp-2 mt-0.5">{stack.description}</p>
+                  )}
+                </div>
+              </div>
+              {stack.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {stack.tags.slice(0, 4).map((tag) => (
+                    <span key={tag} className="text-[9px] text-gray-500 bg-white/5 px-1.5 py-0.5 rounded-full">{tag}</span>
+                  ))}
+                </div>
+              )}
+              <div className="flex items-center justify-between mt-auto pt-2 border-t border-white/5">
+                <span className="text-[10px] text-gray-600">{stack.repos.length} repo</span>
+                <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                  <button onClick={(e) => openEdit(stack, e)} className="p-1.5 rounded-lg text-gray-700 hover:text-gray-300 hover:bg-white/5 transition-all">
+                    <Pencil className="w-3 h-3" />
+                  </button>
+                  <button onClick={(e) => handleDelete(stack, e)} className="p-1.5 rounded-lg text-gray-700 hover:text-red-400 hover:bg-red-500/5 transition-all">
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
     </motion.div>
   );
 }
@@ -483,6 +1037,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [activeNav, setActiveNav] = useState("overview");
   const [report, setReport] = useState<DailyReport | null>(null);
+  const [stacks, setStacks] = useState<Stack[]>([]);
   const [loadingReport, setLoadingReport] = useState(false);
   const [running, setRunning] = useState(false);
   const [runError, setRunError] = useState<string | null>(null);
@@ -723,7 +1278,11 @@ export default function DashboardPage() {
           <AnimatePresence mode="wait">
             {activeNav === "categorize" ? (
               <motion.div key="categorize" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <CategorizeView />
+                <CategorizeView stacks={stacks} onStacksChange={setStacks} />
+              </motion.div>
+            ) : activeNav === "github" ? (
+              <motion.div key="github" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                <GithubExploreView stacks={stacks} onStacksChange={setStacks} />
               </motion.div>
             ) : loadingReport ? (
               <motion.div
@@ -739,7 +1298,6 @@ export default function DashboardPage() {
             ) : report ? (
               <motion.div key={activeNav} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                 {activeNav === "overview" && <BriefingView report={report} online={sourcesOnline} />}
-                {activeNav === "github" && <GithubExploreView report={report} />}
                 {activeNav === "ai-news" && <AINewsView report={report} />}
               </motion.div>
             ) : (

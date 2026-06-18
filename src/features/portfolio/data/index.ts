@@ -1,3 +1,62 @@
+export const projects = [
+  {
+    id: "01",
+    title: "Point Of Sale Systems",
+    description: "Hệ thống POS cho bán lẻ với logic nghiệp vụ phức tạp, quản lý kho và phân quyền theo vai trò.",
+    tags: ["Node.js", "React Native", "REST API", "PostgreSQL"],
+    iconUrl: "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171918_4a5edc79-d78f-4637-ac8b-53c43c220606.png&w=1280&q=85",
+    highlights: [
+      "Node.js backend & React Native",
+      "Complex retail business logic",
+      "Role-based REST APIs",
+    ],
+    website: null as string | null,
+    docs: null as string | null,
+  },
+  {
+    id: "02",
+    title: "Real-time Restaurant KDS",
+    description: "Kitchen Display System với WebSocket đồng bộ hai chiều, Redis caching và SSR cho hiệu năng tối ưu.",
+    tags: ["WebSocket", "Redis", "Next.js", "TanStack Query"],
+    iconUrl: "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171741_ed9845ab-f5b2-4018-8ce7-07cc01823522.png&w=1280&q=85",
+    highlights: [
+      "Layered API with Redis caching",
+      "WebSocket bi-directional sync",
+      "SSR/SSG & TanStack Query",
+    ],
+    website: null as string | null,
+    docs: null as string | null,
+  },
+  {
+    id: "04",
+    title: "InMap — Indoor Navigation",
+    description: "Hệ thống định vị & chỉ đường trong nhà thông minh với sơ đồ ERD tương tác, tài liệu kỹ thuật đầy đủ và nhật ký họp mentor.",
+    tags: ["MongoDB", "Node.js", "Graph Algorithm", "HTML5"],
+    iconUrl: "",
+    highlights: [
+      "Indoor wayfinding & location system",
+      "Interactive ERD visualizer (16 collections)",
+      "6-chapter technical documentation",
+    ],
+    website: null as string | null,
+    docs: "/projects/inmap",
+  },
+  {
+    id: "03",
+    title: "EcoRent Platform",
+    description: "Nền tảng thuê xe với KYC onboarding bằng OCR, chat realtime SignalR và tích hợp thanh toán VNPay.",
+    tags: ["Next.js 16", "SignalR", "VNPay", "OCR"],
+    iconUrl: "https://images.higgs.ai/?default=1&output=webp&url=https%3A%2F%2Fd8j0ntlcm91z4.cloudfront.net%2Fuser_38xzZboKViGWJOttwIXH07lWA1P%2Fhf_20260405_171809_f56666dc-c099-4778-ad82-9ad4f209567b.png&w=1280&q=85",
+    highlights: [
+      "Next.js 16 App Router",
+      "KYC onboarding with OCR",
+      "SignalR chat & VNPay",
+    ],
+    website: null as string | null,
+    docs: null as string | null,
+  },
+];
+
 export const techStack = [
   {
     name: "React Developer",

@@ -60,7 +60,7 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
-## 5. Role Split: Main agent plans, sub agent coder executes
+<!-- ## 5. Role Split: Main agent plans, sub agent coder executes
 
 **The main agent does NOT directly write or edit code. It only analyzes technically, creates a plan, then delegates execution to the `coder` sub agent.**
 
@@ -76,7 +76,7 @@ Exceptions (main agent may act directly, no coder needed):
 - Read-only shell commands for exploration.
 
 Wrong: Main agent calls `Edit` on `lib/main.dart` to add a widget.
-Right: Main agent creates a plan → `Agent(subagent_type="coder", prompt="Edit lib/main.dart: add widget X at line Y, reason Z, ...")`.
+Right: Main agent creates a plan → `Agent(subagent_type="coder", prompt="Edit lib/main.dart: add widget X at line Y, reason Z, ...")`. -->
 
 ---
 

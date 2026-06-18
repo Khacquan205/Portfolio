@@ -32,6 +32,26 @@ export interface AgentResult<T> {
   error?: string;
 }
 
+export interface SavedRepo {
+  fullName: string;
+  url: string;
+  stars: number;
+  language: string | null;
+  description: string;
+  addedAt: string;
+}
+
+export interface Stack {
+  id: string;
+  name: string;
+  description: string;
+  tags: string[];
+  imageUrl: string;
+  repos: SavedRepo[];
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface DailyReport {
   date: string;
   generatedAt: string;

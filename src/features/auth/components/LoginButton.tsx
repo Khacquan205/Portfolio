@@ -7,7 +7,7 @@
 import { useSession, signIn, signOut } from "next-auth/react";
 import { motion, AnimatePresence } from "motion/react";
 import { useState, useRef, useEffect } from "react";
-import { LogOut, LayoutDashboard, ChevronDown } from "lucide-react";
+import { LogOut, LayoutDashboard, ChevronDown, FolderKanban } from "lucide-react";
 import Link from "next/link";
 
 export function LoginButton() {
@@ -80,6 +80,16 @@ export function LoginButton() {
                 <p className="text-xs text-[#E1E0CC] font-semibold truncate">{session.user.name}</p>
                 <p className="text-[10px] text-gray-500 truncate mt-0.5">{session.user.email}</p>
               </div>
+
+              {/* Projects link (visible to all) */}
+              <Link
+                href="/projects"
+                onClick={() => setDropdownOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 text-xs text-gray-300 hover:text-[#E1E0CC] hover:bg-white/5 transition-colors group/item"
+              >
+                <FolderKanban className="w-3.5 h-3.5 text-primary group-hover/item:scale-110 transition-transform" />
+                <span className="font-medium uppercase tracking-wider">Projects</span>
+              </Link>
 
               {/* Dashboard link (only visible for owner) */}
               {(session as any).isOwner && (
