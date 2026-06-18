@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 import { NextRequest, NextResponse } from "next/server";
-import { getLatestReport, getReportByDate } from "../../../../lib/agents/storage";
+import { getLatestReport, getReportByDate } from "@/features/agents/storage";
 
 export const dynamic = "force-dynamic";
 
@@ -18,14 +18,14 @@ export async function GET(req: NextRequest) {
 
     if (!report) {
       return NextResponse.json(
-        { error: "No report found. Run the agents first." },
+        { error: "Chưa có bản tin nào. Hãy chạy agent trước." },
         { status: 404 }
       );
     }
 
     return NextResponse.json(report);
   } catch (err) {
-    const error = err instanceof Error ? err.message : "Unknown error";
+    const error = err instanceof Error ? err.message : "Lỗi không xác định";
     return NextResponse.json({ error }, { status: 500 });
   }
 }

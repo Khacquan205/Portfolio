@@ -2,11 +2,11 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  *
- * GitHub Trending Worker Agent — powered by Gemini Flash
+ * GitHub Trending Worker Agent — powered via OpenRouter
  * Uses GitHub Search API to find AI/ML repos with high star velocity this week,
- * then Gemini Flash analyzes the trends.
+ * then an OpenRouter model analyzes the trends.
  */
-import { GoogleGenAI } from "@google/genai";
+import { getOpenRouterClient, OPENROUTER_MODELS } from "./openrouter";
 import { AgentResult, GitHubRepo, GitHubTrend } from "./types";
 
 interface GitHubSearchItem {
@@ -95,8 +95,8 @@ export async function runGitHubAgent(): Promise<AgentResult<GitHubTrend[]>> {
       return { success: false, error: "No repos found" };
     }
 
-    // Gemini Flash analyzes the trends
-    const genai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+    // OpenRouter model analyzes the trends
+    const client = getOpenRouterClient();
 
     const reposText = allRepos
       .map(
@@ -108,32 +108,36 @@ export async function runGitHubAgent(): Promise<AgentResult<GitHubTrend[]>> {
       )
       .join("\n\n");
 
-    const prompt = `You are a senior developer analyzing GitHub's AI/ML ecosystem. Analyze these trending repositories from the past week and identify the TOP 8 most significant ones.
+    const prompt = `You are a senior developer analyzing GitHub's AI/ML ecosystem for a Vietnamese audience. Analyze these trending repositories from the past week and identify the TOP 8 most significant ones.
 
 REPOSITORIES:
 ${reposText}
 
 For each selected repo, provide a brief insight about WHY it's trending and what technology/trend it represents.
 
-Respond in JSON ONLY (no markdown):
+Respond in JSON ONLY (no markdown). The "insight" and "overallTrend" fields MUST be written in natural, easy-to-understand Vietnamese (tiếng Việt tự nhiên, dễ hiểu, không dịch máy):
 {
   "trends": [
     {
       "fullName": "owner/repo",
-      "insight": "2-sentence insight: what this repo does and why developers should pay attention"
+      "insight": "Nhận xét 2 câu: repo này làm gì và vì sao developer nên chú ý đến nó"
     }
   ],
-  "overallTrend": "1 sentence describing the dominant trend across all these repos"
+  "overallTrend": "1 câu mô tả xu hướng chủ đạo đang nổi lên trong các repo trên"
 }`;
 
-    const response = await genai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: prompt,
-    });
+    const completion = await client.chat.completions.create(
+      {
+        model: OPENROUTER_MODELS.worker,
+        max_tokens: 4096,
+        messages: [{ role: "user", content: prompt }],
+      },
+      { timeout: 60_000 }
+    );
 
-    const text = response.text || "";
+    const text = completion.choices?.[0]?.message?.content || "";
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("Invalid JSON from Gemini");
+    if (!jsonMatch) throw new Error("Invalid JSON from OpenRouter");
 
     const parsed = JSON.parse(jsonMatch[0]);
     const trendMap = new Map<string, string>(

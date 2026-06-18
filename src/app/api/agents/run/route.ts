@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Main orchestration endpoint for the AI Agent Team.
- * Triggered by: Vercel Cron Job (7AM VN time) OR manual trigger from Dashboard owner.
+ * Triggered by: Vercel Cron Job (6AM VN time) OR manual trigger from Dashboard owner.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
-import { runNewsAgent } from "../../../../lib/agents/newsAgent";
-import { runGitHubAgent } from "../../../../lib/agents/githubAgent";
-import { runLeaderAgent } from "../../../../lib/agents/leaderAgent";
-import { saveReport } from "../../../../lib/agents/storage";
-import { DailyReport } from "../../../../lib/agents/types";
+import { runNewsAgent } from "@/features/agents/newsAgent";
+import { runGitHubAgent } from "@/features/agents/githubAgent";
+import { runLeaderAgent } from "@/features/agents/leaderAgent";
+import { saveReport } from "@/features/agents/storage";
+import { DailyReport } from "@/features/agents/types";
 
 export const maxDuration = 300; // Pro plan; Hobby falls back to 10s (cron has higher limits)
 export const dynamic = "force-dynamic";
@@ -22,17 +22,22 @@ const ALLOWED_EMAILS = ["khacquan2054@gmail.com"];
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
 
-  // Auth: allow Vercel Cron (CRON_SECRET header) or dashboard owner
-  const cronSecret = req.headers.get("x-cron-secret");
-  const isValidCron =
-    cronSecret && cronSecret === process.env.CRON_SECRET;
+  // Auth: allow Vercel Cron (sends "Authorization: Bearer $CRON_SECRET" automatically,
+  // or "x-cron-secret" for manual/local testing) or dashboard owner
+  const authHeader = req.headers.get("authorization");
+  const cronSecret =
+    req.headers.get("x-cron-secret") ||
+    authHeader?.replace(/^Bearer\s+/i, "");
+  const isValidCron = Boolean(
+    cronSecret && process.env.CRON_SECRET && cronSecret === process.env.CRON_SECRET
+  );
 
   let isOwner = false;
   if (!isValidCron) {
     const session = await getServerSession(authOptions);
     isOwner = ALLOWED_EMAILS.includes(session?.user?.email ?? "");
     if (!isOwner) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Không có quyền truy cập" }, { status: 401 });
     }
   }
 
@@ -72,7 +77,7 @@ export async function POST(req: NextRequest) {
     status,
     newsHighlights,
     githubTrends,
-    trendTheme: leaderResult.data?.trendTheme || "Daily Tech Briefing",
+    trendTheme: leaderResult.data?.trendTheme || "Bản Tin Công Nghệ Hàng Ngày",
     leaderSummary: leaderResult.data?.leaderSummary || "",
     actionItems: leaderResult.data?.actionItems || [],
     stats: {
@@ -103,7 +108,7 @@ export async function POST(req: NextRequest) {
 export async function GET() {
   return NextResponse.json({
     service: "AI Agent Team",
-    agents: ["NewsAgent (Gemini)", "GitHubAgent (Gemini)", "LeaderAgent (Claude Sonnet)"],
+    agents: ["NewsAgent (OpenRouter)", "GitHubAgent (OpenRouter)", "LeaderAgent (OpenRouter)"],
     status: "ready",
   });
 }

@@ -6,15 +6,15 @@
 
 import { motion, useInView } from "motion/react";
 import { ArrowRight, Check } from "lucide-react";
-import { WordsPullUp, WordsPullUpMultiStyle, ScrollRevealText } from "../components/animations";
-import { LoginButton } from "../components/LoginButton";
+import { WordsPullUp, WordsPullUpMultiStyle, ScrollRevealText } from "@/features/portfolio/components/animations";
+import { LoginButton } from "@/features/auth/components/LoginButton";
 import { useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
-import { techStack, experience, testimonials } from "../data";
+import { techStack, experience, testimonials } from "@/features/portfolio/data";
 import dynamic from "next/dynamic";
 
-const TechIconCardExperience = dynamic(() => import("../components/TechIconCardExperience"), { ssr: false });
-const ContactExperience = dynamic(() => import("../components/contact/ContactExperience"), { ssr: false });
+const TechIconCardExperience = dynamic(() => import("@/features/portfolio/components/TechIconCardExperience"), { ssr: false });
+const ContactExperience = dynamic(() => import("@/features/portfolio/components/contact/ContactExperience"), { ssr: false });
 
 const navLinks = ["About", "Experience", "Projects", "Contact"];
 

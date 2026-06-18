@@ -2,11 +2,11 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  *
- * Tech News Worker Agent — powered by Gemini Flash
+ * Tech News Worker Agent — powered via OpenRouter
  * Fetches RSS feeds from major AI/tech sources and summarizes the top stories.
  */
 import Parser from "rss-parser";
-import { GoogleGenAI } from "@google/genai";
+import { getOpenRouterClient, OPENROUTER_MODELS } from "./openrouter";
 import { AgentResult, NewsItem } from "./types";
 
 const RSS_FEEDS = [
@@ -77,8 +77,8 @@ export async function runNewsAgent(): Promise<AgentResult<NewsItem[]>> {
       return { success: false, error: "No articles collected from RSS feeds" };
     }
 
-    // Use Gemini Flash to pick and summarize top stories
-    const genai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! });
+    // Use OpenRouter to pick and summarize top stories
+    const client = getOpenRouterClient();
 
     const articlesText = allArticles
       .map(
@@ -87,32 +87,36 @@ export async function runNewsAgent(): Promise<AgentResult<NewsItem[]>> {
       )
       .join("\n\n---\n\n");
 
-    const prompt = `You are a tech news curator for a senior developer. Analyze these articles from the last 24 hours and select the TOP 5 most important/impactful ones in the AI/tech space.
+    const prompt = `You are a tech news curator for a senior Vietnamese developer. Analyze these articles from the last 24 hours and select the TOP 5 most important/impactful ones in the AI/tech space.
 
 ARTICLES:
 ${articlesText}
 
-Respond in JSON format ONLY (no markdown, no explanation):
+Respond in JSON format ONLY (no markdown, no explanation). The "title" and "summary" fields MUST be written in natural, easy-to-understand Vietnamese (tiếng Việt tự nhiên, dễ hiểu, không dịch máy):
 {
   "highlights": [
     {
-      "title": "article title",
+      "title": "Dịch tiêu đề bài báo sang tiếng Việt tự nhiên, dễ hiểu (giữ nguyên tên riêng: công ty, sản phẩm, tên người)",
       "source": "source name",
       "url": "article url",
-      "summary": "2-sentence summary in English, focusing on why it matters to a developer",
+      "summary": "Tóm tắt 2 câu bằng tiếng Việt, giải thích ngắn gọn vì sao tin này quan trọng với một developer",
       "publishedAt": "ISO date string"
     }
   ]
 }`;
 
-    const response = await genai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: prompt,
-    });
+    const completion = await client.chat.completions.create(
+      {
+        model: OPENROUTER_MODELS.worker,
+        max_tokens: 4096,
+        messages: [{ role: "user", content: prompt }],
+      },
+      { timeout: 60_000 }
+    );
 
-    const text = response.text || "";
+    const text = completion.choices?.[0]?.message?.content || "";
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("Invalid JSON response from Gemini");
+    if (!jsonMatch) throw new Error("Invalid JSON response from OpenRouter");
 
     const parsed = JSON.parse(jsonMatch[0]);
     const highlights: NewsItem[] = parsed.highlights || [];

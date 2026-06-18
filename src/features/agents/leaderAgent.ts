@@ -2,10 +2,10 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  *
- * Leader / CEO Agent — powered by Claude Sonnet
+ * Leader / CEO Agent — powered via OpenRouter
  * Receives raw data from all Worker Agents and synthesizes a daily briefing.
  */
-import Anthropic from "@anthropic-ai/sdk";
+import { getOpenRouterClient, OPENROUTER_MODELS } from "./openrouter";
 import { AgentResult, DailyReport, GitHubTrend, NewsItem } from "./types";
 
 interface LeaderInput {
@@ -17,13 +17,11 @@ interface LeaderInput {
 export async function runLeaderAgent(
   input: LeaderInput
 ): Promise<AgentResult<Partial<DailyReport>>> {
-  console.log("[LeaderAgent] Starting synthesis with Claude Sonnet...");
+  console.log("[LeaderAgent] Starting synthesis via OpenRouter...");
   const startTime = Date.now();
 
   try {
-    const client = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY!,
-    });
+    const client = getOpenRouterClient();
 
     const newsSection =
       input.news.length > 0
@@ -65,28 +63,31 @@ ${githubSection}
 === YOUR TASK ===
 Synthesize this data into a morning briefing. Be direct, insightful, and actionable — like a smart COO briefing the CEO. Focus on what matters for a developer building products with AI.
 
-Respond in JSON ONLY (no markdown, no extra text):
+Respond in JSON ONLY (no markdown, no extra text). Write ALL fields below in natural, easy-to-understand Vietnamese (tiếng Việt tự nhiên, dễ hiểu, không dịch máy):
 {
-  "trendTheme": "1 headline sentence capturing the dominant tech theme today (max 15 words)",
-  "leaderSummary": "3-4 sentences of your synthesis: connect the news dots, identify what the github trends reveal about where the industry is heading, and what this means for a developer. Write in a direct, smart tone.",
+  "trendTheme": "1 câu tiêu đề ngắn nêu bật chủ đề công nghệ nổi bật nhất hôm nay (tối đa 15 từ)",
+  "leaderSummary": "3-4 câu tổng hợp: liên kết các tin tức lại với nhau, chỉ ra xu hướng GitHub đang phản ánh điều gì về ngành, và ý nghĩa của nó với một developer. Viết với giọng văn trực tiếp, sắc bén.",
   "actionItems": [
-    "Specific, concrete action the developer should consider doing today (not generic advice)",
-    "Another specific action",
-    "Another specific action"
+    "Hành động cụ thể, rõ ràng mà developer nên làm ngay hôm nay (không nói chung chung)",
+    "Một hành động cụ thể khác",
+    "Một hành động cụ thể khác"
   ]
 }`;
 
-    const message = await client.messages.create({
-      model: "claude-sonnet-4-5",
-      max_tokens: 1024,
-      messages: [{ role: "user", content: prompt }],
-    });
+    const completion = await client.chat.completions.create(
+      {
+        model: OPENROUTER_MODELS.leader,
+        max_tokens: 4096,
+        messages: [{ role: "user", content: prompt }],
+      },
+      { timeout: 60_000 }
+    );
 
-    const content = message.content[0];
-    if (content.type !== "text") throw new Error("Unexpected response type");
+    const text = completion.choices?.[0]?.message?.content;
+    if (!text) throw new Error("Empty response from OpenRouter");
 
-    const jsonMatch = content.text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("Invalid JSON from Claude");
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error("Invalid JSON from LeaderAgent model");
 
     const parsed = JSON.parse(jsonMatch[0]);
 
@@ -103,14 +104,14 @@ Respond in JSON ONLY (no markdown, no extra text):
     const error = err instanceof Error ? err.message : "Unknown error";
     console.error("[LeaderAgent] Error:", error);
 
-    // Fallback: generate basic summary without Claude
+    // Fallback: generate basic summary without the LLM
     return {
       success: false,
       error,
       data: {
-        trendTheme: "Daily briefing — AI analysis unavailable",
-        leaderSummary: `Today's briefing collected ${input.news.length} news items and ${input.github.length} GitHub trends. Manual review recommended.`,
-        actionItems: ["Check the news highlights below", "Review GitHub trending repos"],
+        trendTheme: "Bản tin hôm nay — Chưa thể phân tích bằng AI",
+        leaderSummary: `Bản tin hôm nay đã thu thập được ${input.news.length} tin tức và ${input.github.length} repo GitHub đang nổi. Bạn nên xem lại thủ công bên dưới.`,
+        actionItems: ["Xem các tin tức nổi bật bên dưới", "Xem các repo GitHub đang trending"],
       },
     };
   }
