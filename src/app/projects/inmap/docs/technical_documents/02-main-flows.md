@@ -31,7 +31,7 @@ Khách vãng lai có thể thiết lập điểm đi và điểm đến theo 3 c
 
 ##  **MAINFLOW 2: LUỒNG QUẢN TRỊ DỮ LIỆU & XÂY DỰNG BẢN ĐỒ (DÀNH CHO QUẢN LÝ TÒA NHÀ)**
 
-![][image1]  
+![Mainflow 2 flowchart](/images/inmap/mainflow2.png)  
 Quy trình này được chia làm hai giai đoạn thao tác tách biệt hoàn toàn trên giao diện:
 
 ###  **SUBFLOW 1: TẢI BẢN THIẾT KẾ 2D ĐỂ HỆ THỐNG TỰ ĐỘNG DỰNG HÌNH 3D (AI-POWERED GENERATION)**

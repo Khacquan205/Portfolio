@@ -1,0 +1,227 @@
+<mxGraphModel dx="3517" dy="1271" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="940" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="bg" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=none;" value=" " vertex="1">
+          <mxGeometry height="980" width="2140" x="-380" as="geometry" />
+        </mxCell>
+        <mxCell id="title" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;" value="Microservices Platform - Container Overview" vertex="1">
+          <mxGeometry height="30" width="780" x="34" y="18" as="geometry" />
+        </mxCell>
+        <mxCell id="sub" parent="1" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontColor=#64748B;align=left;verticalAlign=middle;" value="Major containers, data ownership, and only the most important communication paths." vertex="1">
+          <mxGeometry height="18" width="900" x="34" y="48" as="geometry" />
+        </mxCell>
+        <mxCell id="client_boundary" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#1e293b;align=left;verticalAlign=top;spacingTop=10;spacingLeft=12;strokeColor=#bfdbfe;" value="1. CLIENT" vertex="1">
+          <mxGeometry height="180" width="230" x="-330" y="66" as="geometry" />
+        </mxCell>
+        <mxCell id="web" parent="client_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#3b82f6;shadow=1;" value="Web App&lt;br&gt;&lt;font style=&quot;font-size: 10px; font-weight: normal; color: rgb(100, 116, 139);&quot;&gt;Next.js&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="180" x="25" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="web_icon" parent="web" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.client;fillColor=#232F3E;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="identity_boundary" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#faf5ff;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#1e293b;align=left;verticalAlign=top;spacingTop=10;spacingLeft=12;strokeColor=#e9d5ff;" value="2. IDENTITY AND ACCESS" vertex="1">
+          <mxGeometry height="180" width="440" x="290" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="keycloak" parent="identity_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#8b5cf6;shadow=1;" value="Keycloak&lt;br&gt;&lt;font style=&#39;font-size:10px;font-weight:normal;color:#64748B;&#39;&gt;OIDC / OAuth2 identity&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="180" x="30" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="keycloak_icon" parent="keycloak" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;fillColor=#FF4F8B;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="keydb" parent="identity_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#10b981;shadow=1;" value="PostgreSQL&lt;br&gt;&lt;font style=&#39;font-size:10px;font-weight:normal;color:#64748B;&#39;&gt;Keycloak database&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="170" x="240" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="keydb_icon" parent="keydb" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.rds;fillColor=#3F8624;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="runtime_boundary" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#f0f9ff;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#1e293b;align=left;verticalAlign=top;spacingTop=10;spacingLeft=12;strokeColor=#bae6fd;" value="3. CORE RUNTIME" vertex="1">
+          <mxGeometry height="345" width="760" x="290" y="315" as="geometry" />
+        </mxCell>
+        <mxCell id="gateway" parent="runtime_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#3b82f6;shadow=1;" value="API Gateway&lt;br&gt;&lt;font style=&#39;font-size:10px;font-weight:normal;color:#64748B;&#39;&gt;Kong / NGINX / Envoy&lt;/font&gt;" vertex="1">
+          <mxGeometry height="150" width="180" x="30" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="gateway_icon" parent="gateway" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.api_gateway;fillColor=#A166FF;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="51" as="geometry" />
+        </mxCell>
+        <mxCell id="iam" parent="runtime_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#3b82f6;shadow=1;" value="IAM Service&lt;br&gt;&lt;font style=&#39;font-size:10px;font-weight:normal;color:#64748B;&#39;&gt;Profiles, roles, application identity&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="460" x="270" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="iam_icon" parent="iam" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cognito;fillColor=#FF4F8B;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="payment" parent="runtime_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#3b82f6;shadow=1;" value="Payment Service&lt;br&gt;&lt;font style=&#39;font-size:10px;font-weight:normal;color:#64748B;&#39;&gt;Payments, refunds, provider webhooks&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="460" x="270" y="135" as="geometry" />
+        </mxCell>
+        <mxCell id="payment_icon" parent="payment" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cost_explorer;fillColor=#3F8624;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="inmap" parent="runtime_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#3b82f6;shadow=1;" value="InMap Service&lt;br&gt;&lt;font style=&#39;font-size:10px;font-weight:normal;color:#64748B;&#39;&gt;Maps, locations, geocoding&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="460" x="270" y="235" as="geometry" />
+        </mxCell>
+        <mxCell id="inmap_icon" parent="inmap" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.location_service;fillColor=#3F8624;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="external_boundary" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#1e293b;align=left;verticalAlign=top;spacingTop=10;spacingLeft=12;strokeColor=#ffedd5;" value="4. EXTERNAL PAYMENT PROVIDERS" vertex="1">
+          <mxGeometry height="180" width="550" x="740" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="stripe" parent="external_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#f97316;shadow=1;" value="Stripe&lt;br&gt;&lt;font style=&#39;font-size:10px;font-weight:normal;color:#64748B;&#39;&gt;Payment provider&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="180" x="30" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="stripe_icon" parent="stripe" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cost_explorer;fillColor=#FF9900;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="vnpay" parent="external_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#f97316;shadow=1;" value="VNPay&lt;br&gt;&lt;font style=&#39;font-size:10px;font-weight:normal;color:#64748B;&#39;&gt;Payment provider&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="180" x="270" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="vnpay_icon" parent="vnpay" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cost_explorer;fillColor=#FF9900;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="data_boundary" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#ecfdf5;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#1e293b;align=left;verticalAlign=top;spacingTop=10;spacingLeft=12;strokeColor=#a7f3d0;" value="5. DATA STORES - owned by the service above" vertex="1">
+          <mxGeometry height="345" width="500" x="1210" y="285" as="geometry" />
+        </mxCell>
+        <mxCell id="iamdb" parent="data_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#10b981;shadow=1;" value="MongoDB (IAM)&lt;br&gt;&lt;font style=&#39;font-size:10px;font-weight:normal;color:#64748B;&#39;&gt;IAM application data&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="180" x="30" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="iamdb_icon" parent="iamdb" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.documentdb_elastic_clusters;fillColor=#3F8624;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="paydb" parent="data_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#10b981;shadow=1;" value="PostgreSQL (Payment)&lt;br&gt;&lt;font style=&quot;font-size: 10px; font-weight: normal; color: rgb(100, 116, 139);&quot;&gt;Payment source of truth&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="180" x="30" y="135" as="geometry" />
+        </mxCell>
+        <mxCell id="paydb_icon" parent="paydb" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.rds;fillColor=#3F8624;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="payredis" parent="data_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#10b981;shadow=1;" value="Redis (Pay)&lt;br&gt;&lt;font style=&#39;font-size:10px;font-weight:normal;color:#64748B;&#39;&gt;Locks / rate limits / idempotency&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="180" x="270" y="135" as="geometry" />
+        </mxCell>
+        <mxCell id="payredis_icon" parent="payredis" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elasticache;fillColor=#C8511B;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="mapdb" parent="data_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#10b981;shadow=1;" value="MongoDB (Map)&lt;br&gt;&lt;font style=&#39;font-size:10px;font-weight:normal;color:#64748B;&#39;&gt;Map and location data&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="180" x="30" y="245" as="geometry" />
+        </mxCell>
+        <mxCell id="mapdb_icon" parent="mapdb" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.documentdb_elastic_clusters;fillColor=#3F8624;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="mapredis" parent="data_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#10b981;shadow=1;" value="Redis (Map)&lt;br&gt;&lt;font style=&#39;font-size:10px;font-weight:normal;color:#64748B;&#39;&gt;Location cache&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="180" x="280" y="245" as="geometry" />
+        </mxCell>
+        <mxCell id="mapredis_icon" parent="mapredis" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.elasticache;fillColor=#C8511B;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="msg_boundary" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#faf5ff;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#1e293b;align=left;verticalAlign=top;spacingTop=10;spacingLeft=12;strokeColor=#e9d5ff;" value="6. ASYNCHRONOUS MESSAGING" vertex="1">
+          <mxGeometry height="150" width="500" x="270" y="740" as="geometry" />
+        </mxCell>
+        <mxCell id="rabbit" parent="msg_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#8b5cf6;shadow=1;" value="RabbitMQ&lt;br&gt;&lt;font style=&#39;font-size:10px;font-weight:normal;color:#64748B;&#39;&gt;Domain events only&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="310" x="95" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="rabbit_icon" parent="rabbit" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.mq;fillColor=#FF6F61;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="obs_boundary" parent="1" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#1e293b;align=left;verticalAlign=top;spacingTop=10;spacingLeft=12;strokeColor=#ffedd5;" value="7. OBSERVABILITY" vertex="1">
+          <mxGeometry height="150" width="760" x="830" y="705" as="geometry" />
+        </mxCell>
+        <mxCell id="prom" parent="obs_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#f97316;shadow=1;" value="Prometheus&lt;br&gt;&lt;font style=&#39;font-size:10px;font-weight:normal;color:#64748B;&#39;&gt;Scrapes /metrics&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="230" x="60" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="prom_icon" parent="prom" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudwatch;fillColor=#EA580C;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="graf" parent="obs_boundary" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeWidth=1.5;fontSize=12;fontStyle=1;fontColor=#0F172A;align=left;verticalAlign=middle;spacingLeft=80;strokeColor=#f97316;shadow=1;" value="Grafana&lt;br&gt;&lt;font style=&#39;font-size:10px;font-weight:normal;color:#64748B;&#39;&gt;Dashboards for DevOps / SRE&lt;/font&gt;" vertex="1">
+          <mxGeometry height="80" width="245" x="405" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="graf_icon" parent="graf" style="shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.quicksight;fillColor=#FF9900;strokeColor=#ffffff;html=1;aspect=fixed;" vertex="1">
+          <mxGeometry height="48" width="48" x="16" y="16" as="geometry" />
+        </mxCell>
+        <mxCell id="n1" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;fontSize=10;fontColor=#475569;align=left;verticalAlign=middle;spacingLeft=10;" value="The Web App authenticates directly with Keycloak. The gateway receives Bearer JWTs and refreshes public keys from Keycloak when needed." vertex="1">
+          <mxGeometry height="30" width="640" x="164" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="web_gw" edge="1" parent="1" source="web" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#475569;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0;entryY=0.5;" target="gateway" value="HTTPS + Bearer JWT">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="web_key" edge="1" parent="1" source="web" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#475569;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="keycloak" value="OIDC login + PKCE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gw_iam" edge="1" parent="1" source="gateway" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#475569;labelBackgroundColor=#ffffff;exitX=1;exitY=0.2;entryX=0;entryY=0.5;" target="iam" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gw_payment" edge="1" parent="1" source="gateway" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#475569;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="payment" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gw_inmap" edge="1" parent="1" source="gateway" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#475569;labelBackgroundColor=#ffffff;exitX=1;exitY=0.8;entryX=0;entryY=0.5;" target="inmap" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="key_keydb" edge="1" parent="1" source="keycloak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#059669;strokeWidth=1.5;fontSize=11;fontColor=#059669;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="keydb" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="iam_key" edge="1" parent="1" source="iam" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#64748b;strokeWidth=1.5;fontSize=11;fontColor=#64748b;dashed=1;dashPattern=1 3;labelBackgroundColor=#ffffff;exitX=0;exitY=0.2;entryX=0.5;entryY=1;" target="keycloak" value="Admin API / role sync">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="iam_iamdb" edge="1" parent="1" source="iam" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#059669;strokeWidth=1.5;fontSize=11;fontColor=#059669;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="iamdb" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="payment_paydb" edge="1" parent="1" source="payment" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#059669;strokeWidth=1.5;fontSize=11;fontColor=#059669;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="paydb" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="payment_redis" edge="1" parent="1" source="payment" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#059669;strokeWidth=1.5;fontSize=11;fontColor=#059669;labelBackgroundColor=#ffffff;exitX=1;exitY=0.8;entryX=0.5;entryY=1;" target="payredis" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1570" y="514" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="inmap_mapdb" edge="1" parent="1" source="inmap" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#059669;strokeWidth=1.5;fontSize=11;fontColor=#059669;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="mapdb" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1020" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="inmap_mapredis" edge="1" parent="1" source="inmap" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#059669;strokeWidth=1.5;fontSize=11;fontColor=#059669;labelBackgroundColor=#ffffff;exitX=1;exitY=0.8;entryX=0.5;entryY=1;" target="mapredis" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1020" y="630" />
+              <mxPoint x="1580" y="630" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pay_stripe" edge="1" parent="1" source="payment" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#475569;labelBackgroundColor=#ffffff;exitX=1;exitY=0.2;entryX=0.5;entryY=1;" target="stripe" value="HTTPS: create payment / refund">
+          <mxGeometry relative="1" x="0.4298" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="stripe_webhook" edge="1" parent="1" source="stripe" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#475569;labelBackgroundColor=#ffffff;dashed=1;dashPattern=8 4;exitX=0.621;exitY=1.047;entryX=1;entryY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" target="payment" value="signed webhook">
+          <mxGeometry relative="1" x="-0.7083" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="882" y="210" />
+              <mxPoint x="880" y="210" />
+              <mxPoint x="880" y="300" />
+              <mxPoint x="1040" y="300" />
+              <mxPoint x="1040" y="490" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vnpay_webhook" edge="1" parent="1" source="vnpay" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#475569;labelBackgroundColor=#ffffff;dashed=1;dashPattern=8 4;exitX=0.5;exitY=1;entryX=1;entryY=0.5;" target="payment" value="signed webhook">
+          <mxGeometry relative="1" x="-0.2222" y="10" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pay_rabbit" edge="1" parent="1" source="payment" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#8b5cf6;strokeWidth=1.5;fontSize=11;fontColor=#8b5cf6;dashed=1;dashPattern=8 4;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=0.5;entryY=0;" target="rabbit" value="payment events">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="inmap_rabbit" edge="1" parent="1" source="inmap" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#8b5cf6;strokeWidth=1.5;fontSize=11;fontColor=#8b5cf6;dashed=1;dashPattern=8 4;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;entryX=0.618;entryY=-0.005;entryDx=0;entryDy=0;entryPerimeter=0;" target="rabbit" value="map events">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="prom_runtime" edge="1" parent="1" source="prom" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#f97316;strokeWidth=1.5;fontSize=11;fontColor=#f97316;dashed=1;dashPattern=8 4;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;entryX=0.8;entryY=1;" target="runtime_boundary" value="scrape /metrics">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="graf_prom" edge="1" parent="1" source="graf" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeColor=#475569;strokeWidth=1.5;fontSize=11;fontColor=#475569;labelBackgroundColor=#ffffff;exitX=0;exitY=0.5;entryX=1;entryY=0.5;" target="prom" value="PromQL query">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#CBD5E1;strokeWidth=1;fontSize=10;fontColor=#475569;align=left;verticalAlign=middle;spacingLeft=10;" value="Payment provider webhooks bypass the API Gateway and go directly to the Payment Service." vertex="1">
+          <mxGeometry height="35" width="470" x="740" y="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>

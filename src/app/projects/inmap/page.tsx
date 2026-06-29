@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import ErCanvas from "./ErCanvas";
 import PaymentCanvas from "./PaymentCanvas";
+import ArchitectureDiagram from "./ArchitectureDiagram";
 
 const SESSION_KEY = "docs_authed";
 
@@ -165,7 +166,17 @@ function MarkdownViewer({ content, hex }: { content: string; hex: string }) {
   while (i < lines.length) {
     const line = lines[i].trim();
     i++;
-    if (!line || /^!\[/.test(line)) continue;
+    if (!line) continue;
+    if (/^!\[/.test(line)) {
+      const imgMatch = line.match(/^!\[([^\]]*)\]\(([^)]+)\)/);
+      if (imgMatch) {
+        nodes.push(
+          <img key={i} src={imgMatch[2]} alt={imgMatch[1]}
+            className="w-full rounded-xl my-4 border border-white/10 object-contain" />
+        );
+      }
+      continue;
+    }
 
     if (/^#\s/.test(line)) {
       const text = unescape(line.replace(/^#\s+/, "").replace(/\*\*/g, ""));
@@ -488,6 +499,7 @@ export default function InMapDocsPage() {
                         >
                           {techSub === "architecture" ? (
                             <div className="flex flex-col gap-3">
+                              <ArchitectureDiagram />
                               {DOC_CONTENT.architecture.map((sec, idx) => (
                                 <div key={idx} className="rounded-xl border border-white/5 overflow-hidden"
                                   style={{ borderLeftWidth: 3, borderLeftColor: DOC_HEX.architecture, borderLeftStyle: "solid" }}>

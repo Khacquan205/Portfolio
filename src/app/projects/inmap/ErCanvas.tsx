@@ -2,10 +2,10 @@
 
 import { useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Plus, Minus, RotateCcw, X, Database, Hand, MousePointer2 } from "lucide-react";
+import { Plus, Minus, RotateCcw, X, Database } from "lucide-react";
 import { COLLECTIONS, RELATIONS, CATEGORY_STYLE, type Collection } from "./schema";
 
-const NODE_W = 212;
+const NODE_W = 240;
 const NODE_H = 66;
 const CANVAS_W = 1560;
 const CANVAS_H = 1080;
@@ -25,10 +25,9 @@ export default function ErCanvas() {
   const [hoverId, setHoverId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [zoom, setZoom] = useState(0.82);
-  const [panMode, setPanMode] = useState(false);
 
   const dragRef = useRef<{ id: string; offX: number; offY: number; moved: boolean } | null>(null);
-  const panRef = useRef<{ sx: number; sy: number; sl: number; st: number; moved: boolean; nodeId?: string } | null>(null);
+  const panRef = useRef<{ sx: number; sy: number; sl: number; st: number; moved: boolean } | null>(null);
 
   const toCanvasCoord = useCallback(
     (clientX: number, clientY: number): Pos => {
@@ -38,28 +37,16 @@ export default function ErCanvas() {
     [zoom]
   );
 
-  const startPan = (e: React.PointerEvent, nodeId?: string) => {
-    const vp = viewportRef.current!;
-    panRef.current = { sx: e.clientX, sy: e.clientY, sl: vp.scrollLeft, st: vp.scrollTop, moved: false, nodeId };
-  };
-
-  // Background pointer down (deselect hoặc bắt đầu pan)
+  // Background pointer down: bắt đầu pan vùng nhìn
   const onCanvasPointerDown = (e: React.PointerEvent) => {
-    if (panMode) {
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-      startPan(e);
-    } else {
-      setSelectedId(null);
-    }
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    const vp = viewportRef.current!;
+    panRef.current = { sx: e.clientX, sy: e.clientY, sl: vp.scrollLeft, st: vp.scrollTop, moved: false };
   };
 
   const onNodePointerDown = (e: React.PointerEvent, id: string) => {
     e.stopPropagation();
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
-    if (panMode) {
-      startPan(e, id);
-      return;
-    }
     const c = toCanvasCoord(e.clientX, e.clientY);
     const pos = positions[id];
     dragRef.current = { id, offX: c.x - pos.x, offY: c.y - pos.y, moved: false };
@@ -92,7 +79,7 @@ export default function ErCanvas() {
   const onPointerUp = () => {
     const p = panRef.current;
     if (p) {
-      if (p.nodeId && !p.moved) setSelectedId((cur) => (cur === p.nodeId ? null : p.nodeId!));
+      if (!p.moved) setSelectedId(null);
       panRef.current = null;
       return;
     }
@@ -167,19 +154,6 @@ export default function ErCanvas() {
           </span>
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
-          {/* Pan / Select toggle */}
-          <div className="flex items-center rounded-lg bg-white/5 border border-white/10 p-0.5 mr-1">
-            <button onClick={() => setPanMode(false)}
-              className={`flex items-center gap-1 h-6 px-2 rounded-md text-[10px] font-bold transition-all ${!panMode ? "bg-cyan-400/20 text-cyan-300" : "text-gray-500 hover:text-gray-300"}`}
-              title="Chế độ chọn / kéo table">
-              <MousePointer2 className="w-3 h-3" /> Select
-            </button>
-            <button onClick={() => setPanMode(true)}
-              className={`flex items-center gap-1 h-6 px-2 rounded-md text-[10px] font-bold transition-all ${panMode ? "bg-cyan-400/20 text-cyan-300" : "text-gray-500 hover:text-gray-300"}`}
-              title="Chế độ Pan — kéo để di chuyển vùng nhìn">
-              <Hand className="w-3 h-3" /> Pan
-            </button>
-          </div>
           <button onClick={() => setZoom((z) => Math.min(1.4, +(z + 0.1).toFixed(2)))}
             className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all" title="Phóng to">
             <Plus className="w-3.5 h-3.5" />
@@ -197,7 +171,7 @@ export default function ErCanvas() {
       </div>
 
       {/* Scrollable viewport */}
-      <div ref={viewportRef} className={`absolute inset-0 top-[49px] overflow-auto ${panMode ? "cursor-grab active:cursor-grabbing" : ""}`}>
+      <div ref={viewportRef} className="absolute inset-0 top-[49px] overflow-auto cursor-grab active:cursor-grabbing">
         <div
           ref={canvasRef}
           onPointerMove={onPointerMove}
@@ -265,9 +239,9 @@ export default function ErCanvas() {
                 <div
                   key={c.id}
                   onPointerDown={(e) => onNodePointerDown(e, c.id)}
-                  onMouseEnter={() => !panMode && setHoverId(c.id)}
-                  onMouseLeave={() => !panMode && setHoverId(null)}
-                  className={`absolute select-none rounded-2xl border-2 transition-[opacity,transform] duration-150 ${panMode ? "" : "cursor-grab active:cursor-grabbing"}`}
+                  onMouseEnter={() => setHoverId(c.id)}
+                  onMouseLeave={() => setHoverId(null)}
+                  className="absolute select-none rounded-2xl border-2 transition-[opacity,transform] duration-150 cursor-grab active:cursor-grabbing"
                   style={{
                     left: pos.x, top: pos.y, width: NODE_W,
                     background: "linear-gradient(155deg, #1c2740 0%, #121a2c 100%)",
@@ -285,7 +259,7 @@ export default function ErCanvas() {
                       <span className="opacity-70">{c.category}</span>
                     </div>
                     <div className="flex items-center justify-between gap-3 mt-1.5">
-                      <span className="text-[15px] font-extrabold text-white truncate font-mono">{c.label}</span>
+                      <span className="text-[14px] font-extrabold text-white font-mono leading-tight break-all">{c.label}</span>
                       <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-white/[0.06] text-gray-300 border border-white/10 shrink-0">
                         {c.tag}
                       </span>
