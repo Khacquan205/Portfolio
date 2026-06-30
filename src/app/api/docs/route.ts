@@ -5,6 +5,7 @@ import fs from "fs";
 const DOC_FILES: Record<string, string> = {
   mainflow: "src/app/projects/inmap/docs/technical_documents/02-main-flows.md",
   functional: "src/app/projects/inmap/docs/technical_documents/03-functional-requirements.md",
+  sitemap: "src/app/projects/inmap/docs/technical_documents/04-sitemap.md",
 };
 
 export async function GET(req: NextRequest) {

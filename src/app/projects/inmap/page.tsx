@@ -7,6 +7,7 @@ import {
   LayoutDashboard, Database, CreditCard, BookOpen, ClipboardList,
   ArrowLeft, ChevronRight,
   GitBranch, Users, Calendar, CheckSquare,
+  ZoomIn,
   type LucideIcon,
 } from "lucide-react";
 import ErCanvas from "./ErCanvas";
@@ -108,18 +109,20 @@ function OverviewSection({ setActive }: { setActive: (id: SectionId) => void }) 
 
 // ─── Section: Tài liệu Kỹ thuật ──────────────────────────────────────────────
 
-type TechSubId = "architecture" | "mainflow" | "functional";
+type TechSubId = "architecture" | "mainflow" | "functional" | "sitemap";
 
 const TECH_SUB_ITEMS: { id: TechSubId; label: string }[] = [
   { id: "architecture", label: "System Architecture"     },
   { id: "mainflow",     label: "Main Flow"               },
   { id: "functional",   label: "Functional Requirements" },
+  { id: "sitemap",      label: "SiteMap"                 },
 ];
 
 const DOC_HEX: Record<TechSubId, string> = {
   architecture: "#22d3ee",
   mainflow:     "#34d399",
   functional:   "#c084fc",
+  sitemap:      "#f59e0b",
 };
 
 type DocSection = { heading: string; body: string };
@@ -146,6 +149,7 @@ const DOC_CONTENT: Record<TechSubId, DocSection[]> = {
     { heading: "MODULE BIÊN TẬP & QUẢN LÝ BẢN ĐỒ CMS (BUILDING MANAGER & OWNER)", body: "FR-CMS-01: Quản lý danh sách tầng (số tầng phân biệt). FR-CMS-02: Nhập sơ đồ + AI tự động số hóa. FR-CMS-03: Chỉnh sửa 2D tương tác (kéo điểm neo thay đổi hình dạng phòng). FR-CMS-04: Tự động sinh mạng lưới nodes/edges khi lưu. FR-CMS-05: Quản lý phiên bản Draft → Publish. FR-CMS-06: Thiết lập POI. FR-CMS-07: Quản lý Connector liên tầng. FR-CMS-08: Lập lịch chặn đường bảo trì." },
     { heading: "MODULE TÌM ĐƯỜNG & BẢN ĐỒ TƯƠNG TÁC (END-USER / GUEST)", body: "FR-USER-01: Bản đồ 3D tương tác (zoom, xoay, dịch chuyển). FR-USER-02: Bộ lọc và chuyển đổi tầng. FR-USER-03: Smart Labels. FR-USER-04: Tra cứu địa điểm. FR-USER-05: Xác định vị trí qua click hoặc quét QR. FR-USER-06: Local Routing (cùng tầng). FR-USER-07: Multi-floor Routing (liên tầng, hướng dẫn đổi thang). FR-USER-08: Hướng dẫn từng bước kèm ước tính khoảng cách/thời gian. FR-USER-09: Accessibility Mode." },
   ],
+  sitemap: [],
 };
 
 function MarkdownViewer({ content, hex }: { content: string; hex: string }) {
@@ -167,6 +171,32 @@ function MarkdownViewer({ content, hex }: { content: string; hex: string }) {
     const line = lines[i].trim();
     i++;
     if (!line) continue;
+    if (/^\[\!\[/.test(line)) {
+      const linkedImgMatch = line.match(/^\[\!\[([^\]]*)\]\(([^)]+)\)\]\(([^)]+)\)/);
+      if (linkedImgMatch) {
+        const alt = linkedImgMatch[1];
+        const imgSrc = linkedImgMatch[2];
+        const linkHref = linkedImgMatch[3];
+        const isPdf = linkHref.toLowerCase().endsWith(".pdf");
+        
+        nodes.push(
+          <div key={i} className="relative group overflow-hidden rounded-xl border border-white/10 my-6 bg-black/20 max-w-full">
+            <img src={imgSrc} alt={alt} className="w-full object-contain transition-transform duration-500 group-hover:scale-[1.01]" />
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
+              <button
+                onClick={() => window.open(linkHref, "_blank")}
+                className="bg-white/10 hover:bg-white/20 active:scale-95 backdrop-blur-md text-[#E1E0CC] hover:text-white border border-white/20 rounded-full px-5 py-2.5 flex items-center gap-2.5 text-xs font-semibold shadow-2xl transition-all pointer-events-auto cursor-pointer"
+              >
+                <ZoomIn className="w-4 h-4 text-cyan-400" />
+                <span>{isPdf ? "Xem sơ đồ PDF gốc" : "Xem ảnh kích thước lớn"}</span>
+              </button>
+            </div>
+          </div>
+        );
+      }
+      continue;
+    }
+
     if (/^!\[/.test(line)) {
       const imgMatch = line.match(/^!\[([^\]]*)\]\(([^)]+)\)/);
       if (imgMatch) {
